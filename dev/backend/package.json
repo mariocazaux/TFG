@@ -1,13 +1,9 @@
 {
   "name": "backend",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "index.ts",
   "scripts": {
-    "start": "node --watch --experimental-strip-types src/index.ts",
-    "build": "tsc"
+    "start": "node --watch src/index.ts"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
   "type": "module"
 }
