@@ -1,0 +1,39 @@
+// -----------------------------------------------------------------------------
+// ELEMENTS / BASE
+// -----------------------------------------------------------------------------
+@use '../settings/settings.colors' as colors;
+@use '../settings/settings.typography' as typo;
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background-color: colors.$color-background;
+  color: colors.$color-text-primary;
+  font-family: typo.$font-family-primary;
+  font-size: typo.$font-size-base;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+a {
+  color: colors.$color-cyan-500;
+  text-decoration: none;
+  transition: color 0.2s ease-in-out;
+
+  &:hover {
+    color: colors.$color-cyan-400;
+  }
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}

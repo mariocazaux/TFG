@@ -7,6 +7,12 @@
       "skillPath": "angular-developer/SKILL.md",
       "computedHash": "d3335311700c3c7ca9e522b0e1e439213f196938517a072fd9e731a7cfe1a069"
     },
+    "bem-structure": {
+      "source": "rolemodel/rolemodel-skills",
+      "sourceType": "github",
+      "skillPath": "skills/bem-structure/SKILL.md",
+      "computedHash": "71cfa8c01894fabceb4d53d231f912a476cff5975466b0d80e99314d3851ac7e"
+    },
     "figma-implement-design": {
       "source": "openai/skills",
       "sourceType": "github",

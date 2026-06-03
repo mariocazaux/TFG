@@ -1,1 +1,28 @@
-/* You can add global styles to this file, and also import other style files */
+// -----------------------------------------------------------------------------
+// MAIN STYLESHEET (ITCSS ARCHITECTURE)
+// -----------------------------------------------------------------------------
+
+// 1. SETTINGS: Variables globales (colores, tipografía, espaciado)
+@forward 'styles/settings/settings.colors';
+@forward 'styles/settings/settings.typography';
+@forward 'styles/settings/settings.spacing';
+
+// 2. TOOLS: Mixins y funciones globales
+// @forward 'styles/tools/tools.mixins';
+
+// 3. GENERIC: Reset o normalización, box-sizing
+// @forward 'styles/generic/generic.reset';
+
+// 4. ELEMENTS: Estilos para etiquetas HTML sin clases (h1, a, body)
+@forward 'styles/elements/elements.typography';
+@forward 'styles/elements/elements.base';
+
+// 5. OBJECTS: Patrones de UI sin cosmética (contenedores, grid, layout)
+// @forward 'styles/objects/objects.layout';
+
+// 6. COMPONENTS: Componentes específicos con cosmética (UI)
+// Los componentes de Angular se importarán en sus propios archivos SCSS,
+// pero aquí irían estilos de componentes globales si existieran.
+
+// 7. UTILITIES: Clases de utilidad y helpers específicos
+@forward 'styles/utilities/utilities.layout';

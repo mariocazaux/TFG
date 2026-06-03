@@ -1,0 +1,33 @@
+// -----------------------------------------------------------------------------
+// SETTINGS / COLORS
+// -----------------------------------------------------------------------------
+// Variables extraídas del diseño de Figma Make (Tema Neon/Oscuro)
+
+$color-background: #030712; // bg-gray-950
+
+// Degradado Kachaoo (Cyan -> Purple -> Pink)
+$color-cyan-400: #22d3ee;
+$color-cyan-500: #06b6d4;
+$color-blue-500: #3b82f6;
+$color-purple-400: #c084fc;
+$color-purple-500: #a855f7;
+$color-pink-500: #ec4899;
+
+// Botones y Glows
+$color-button-cyan-gradient-start: $color-cyan-500;
+$color-button-cyan-gradient-end: $color-blue-500;
+$color-button-purple-gradient-start: $color-purple-500;
+$color-button-purple-gradient-end: $color-pink-500;
+$color-glow-cyan: rgb(34 211 238 / 40%);
+$color-glow-cyan-strong: rgb(34 211 238 / 80%);
+$color-glow-purple: rgb(168 85 247 / 50%);
+$color-glow-purple-light: rgb(168 85 247 / 20%);
+
+// Texto y Grises
+$color-text-primary: #fff; // text-white
+$color-text-secondary: #9ca3af; // text-gray-400
+$color-text-muted: #d1d5db; // text-gray-300
+
+$color-gray-700: #374151;
+$color-gray-800: #1f2937;
+$color-gray-900: #111827;
