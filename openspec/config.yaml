@@ -1,50 +1,164 @@
 schema: spec-driven
 
-# Project context
-# Aquí es donde defines de forma global tu stack y reglas del proyecto.
-# Esto lo leerá la IA (yo) cada vez que vayamos a crear nuevas características.
+# ──────────────────────────────────────────────────────────────────────────────
+# PROJECT CONTEXT
+# Este bloque es el "worldview" del proyecto. La IA lo lee en cada artefacto
+# generado (proposal, specs, design, tasks). Máximo 50 KB.
+# ──────────────────────────────────────────────────────────────────────────────
 context: |
-  Dominio del Proyecto (Domain):
-    Aplicación web y móvil (PWA/Responsive) orientada a los amantes del motor (coches y motos).
-    Funcionalidades Core:
-      - CRUD de Usuarios y Perfiles Avanzados: los usuarios deben especificar su(s) vehículo(s) aclarando tipo, marca, modelo, etc.
-      - Sistema de Rutas: crear, editar y compartir rutas geolocalizadas (tipo Google Maps).
-      - Álbumes de Viaje: los usuarios pueden crear álbumes de fotos de sus viajes y subir imágenes.
-      - Puntos de interés (POIs) y Publicidad: añadir lugares como restaurantes u hoteles a las rutas. Se deben implementar espacios estratégicos para futura publicidad de los negocios que quieran aparecer en la plataforma.
-      - Componente Social y Quedadas: unirse a rutas de otros usuarios y organizar quedadas masivas de motor.
+  # ── Dominio del Proyecto ────────────────────────────────────────────────────
+  Descripción:
+    Aplicación web y móvil (PWA/Responsive) orientada a los amantes del motor
+    (coches y motos). TFG orientado a demostrar principios de ingeniería de
+    software sólidos (SOLID, DRY) con calidad de producción.
 
-  Tech Stack e Infraestructura:
-    - Frontend: Angular (versiones modernas), Prerenderizado, SSG, PWA, SCSS.
-    - UX/UI: Responsive, basado en Figma (https://www.figma.com/make/1JIqe4ZFWdNHd2gvZPHywf/Motorist-and-Car-Enthusiast-App?t=X87HuckHr5HSeZRQ-0).
-    - Backend: Node.js (v24), Express.
-    - Base de Datos: PostgreSQL (usando PostGIS para geolocalización).
-    - Despliegue (Producción): Todo el stack se alojará en la plataforma Render.
+  Funcionalidades Core:
+    - CRUD de Usuarios y Perfiles Avanzados: los usuarios especifican su(s)
+      vehículo(s) indicando tipo, marca, modelo y demás atributos.
+    - Sistema de Rutas: crear, editar y compartir rutas geolocalizadas
+      (estilo Google Maps).
+    - Álbumes de Viaje: álbumes de fotos por viaje con subida de imágenes.
+    - Puntos de Interés (POIs) y Publicidad: añadir lugares (restaurantes,
+      hoteles, etc.) a las rutas con espacios estratégicos para publicidad
+      futura de negocios asociados.
+    - Componente Social y Quedadas: unirse a rutas de otros usuarios y
+      organizar quedadas masivas de motor.
 
-  Directrices de Diseño (UI/UX):
-    - Estilo: Limpio, moderno, minimalista pero altamente llamativo ("Premium/High-End feel").
-    - Usabilidad: Enfoque principal en la usabilidad móvil (Mobile-First), dado que se usará en ruta.
+  # ── Tech Stack ──────────────────────────────────────────────────────────────
+  Frontend:
+    framework: Angular          # Versiones modernas con signals y standalone components
+    rendering: SSG / Prerender  # Prerenderizado estático donde sea posible
+    pwa: true                   # Service Worker + manifest para uso offline en ruta
+    styling: SCSS
+    package_manager: npm
 
-  Reglas de Desarrollo (Senior Developer Mindset):
-    - Calidad: Es un TFG, el código debe demostrar principios de ingeniería de software sólidos (SOLID, DRY).
-    - Modularidad: Priorizar funciones pequeñas, atómicas y altamente reutilizables en todo el stack.
-    - Clean Code: Nombres de variables y funciones muy descriptivos. Evitar anidaciones profundas.
-    - Documentación: El código debe estar excelentemente documentado. Usar JSDoc/TSDoc para explicar funciones complejas y el "por qué" de decisiones de negocio.
+  Backend:
+    runtime: Node.js v24
+    framework: Express
+    api_style: RESTful / JSON
+    auth: JWT (access + refresh tokens)
 
-# Per-artifact rules (optional)
-# Reglas específicas para los documentos de OpenSpec:
+  Base de Datos:
+    engine: Supabase             # PostgreSQL gestionado con PostGIS para geolocalización
+    orm: N/A                     # Consultas directas vía Supabase JS Client / SQL raw
+    geolocation: PostGIS         # Para rutas, POIs y búsquedas espaciales
+
+  # ── Tooling IA (MCP Servers) ────────────────────────────────────────────────
+  # Servidores MCP (Model Context Protocol) conectados al IDE (Antigravity / Gemini).
+  # La configuración real vive en  ~/.gemini/config/mcp_config.json
+  # Aquí se documentan para que la IA y los colaboradores sepan qué herramientas
+  # están disponibles en el flujo de desarrollo.
+  MCP_Servers:
+    angular-cli:
+      descripcion: >
+        Acceso project-aware al workspace Angular. Permite generar componentes,
+        consultar la documentación oficial y ejecutar comandos del CLI con
+        contexto de la versión y configuración real del proyecto.
+      tipo: stdio (npx)
+      requiere_token: false
+
+    supabase:
+      descripcion: >
+        Gestión de la base de datos, tablas, funciones RPC, políticas RLS y
+        migraciones directamente desde el IDE. Conectado al proyecto Supabase
+        Cloud (o local con supabase start).
+      tipo: remote (serverUrl)
+      requiere_token: false   # Autenticación manejada por Supabase CLI / dashboard
+
+    render:
+      descripcion: >
+        Gestión de la infraestructura de despliegue: servicios web, static sites,
+        logs, métricas de rendimiento y bases de datos PostgreSQL en Render.
+      tipo: remote (serverUrl)
+      requiere_token: true    # API Key generada en Render Dashboard > Account Settings
+
+    figma-developer-mcp:
+      descripcion: >
+        Lectura del prototipo de Figma (frames, componentes, tokens de diseño)
+        directamente desde el IDE. Permite implementar UI fiel al diseño sin
+        cambiar de contexto.
+      tipo: stdio (npx)
+      requiere_token: true    # Personal Access Token de Figma
+
+  # ── Entornos ────────────────────────────────────────────────────────────────
+  Entornos:
+    local:
+      descripcion: Desarrollo local del desarrollador
+      frontend_url: http://localhost:4200
+      backend_url: http://localhost:3000
+      base_datos: Instancia Supabase local (supabase start) o proyecto dev en Supabase Cloud
+      variables: .env.local (nunca subir a VCS)
+
+    produccion:
+      descripcion: Despliegue definitivo en Render
+      frontend_url: https://<app>.onrender.com       # o dominio personalizado
+      backend_url: https://<api>.onrender.com
+      base_datos: Proyecto Supabase Cloud (producción)
+      variables: Variables de entorno configuradas en el dashboard de Render
+
+  # ── Prototipo y Diseño ──────────────────────────────────────────────────────
+  Prototipo:
+    herramienta: Figma
+    url: https://www.figma.com/make/1JIqe4ZFWdNHd2gvZPHywf/Motorist-and-Car-Enthusiast-App?t=X87HuckHr5HSeZRQ-0
+    notas: >
+      El prototipo en Figma es la fuente de verdad visual. Cualquier decisión
+      de UI/UX debe validarse contra él antes de implementar. Los componentes
+      Angular deben reflejar fielmente los diseños aprobados.
+
+  # ── Directrices de Diseño (UI/UX) ──────────────────────────────────────────
+  Diseño:
+    estilo: Limpio, moderno, minimalista con "Premium / High-End feel"
+    enfoque: Mobile-First (la app se usará principalmente en ruta)
+
+  # ── Reglas de Desarrollo ────────────────────────────────────────────────────
+  Desarrollo:
+    principios: SOLID, DRY
+    modularidad: >
+      Priorizar funciones pequeñas, atómicas y altamente reutilizables
+      en todo el stack (componentes Angular, servicios Express, helpers).
+    clean_code: >
+      Nombres de variables y funciones muy descriptivos. Evitar anidaciones
+      profundas (máx. 2–3 niveles). Preferir early returns.
+    documentacion: >
+      Código excelentemente documentado. Usar JSDoc/TSDoc para funciones
+      complejas y para explicar el "por qué" de decisiones de negocio.
+
+# ──────────────────────────────────────────────────────────────────────────────
+# PER-ARTIFACT RULES
+# Reglas específicas inyectadas solo en el artefacto correspondiente.
+# Las claves deben coincidir con los artifact IDs del schema "spec-driven":
+#   proposal | specs | design | tasks
+# ──────────────────────────────────────────────────────────────────────────────
 rules:
   proposal:
-    - Asegura siempre que la arquitectura propuesta contemple el enfoque "Mobile-First" y el diseño minimalista.
-    - Para tareas de rutas, ten siempre en mente el uso óptimo de coordenadas y geolocalización.
+    - Asegura que la arquitectura propuesta contemple siempre el enfoque
+      "Mobile-First" y el estilo visual minimalista definido en el prototipo
+      de Figma.
+    - Para cualquier funcionalidad de rutas o mapas, ten en mente el uso
+      óptimo de coordenadas, PostGIS y la API de geolocalización del navegador.
+    - Indica explícitamente en qué entorno (local / producción) se verá el
+      impacto del cambio y si requiere ajustes de variables de entorno.
 
   specs:
-    - Trata las especificaciones (specs) como un contrato de comportamiento, NO como un plan de implementación.
+    - Trata las especificaciones como un contrato de comportamiento observable,
+      NO como un plan de implementación técnica.
+    - Usa el formato Given / When / Then para los escenarios de aceptación.
+    - Referencia el prototipo de Figma (frame o componente concreto) cuando
+      la spec describa comportamiento de UI.
 
   design:
-    - Incluye archivos concretos, rutas, assets o dependencias solo cuando clarifiquen la implementación técnica.
+    - Incluye rutas de archivo, nombres de módulos Angular o endpoints Express
+      solo cuando clarifiquen la implementación técnica.
+    - Especifica qué tablas o funciones de Supabase se ven afectadas.
+    - Añade diagramas de secuencia para flujos complejos (auth, subida de
+      imágenes, cálculo de rutas).
 
   tasks:
-    - Escribe cada tarea como un entregable atómico, concreto y testable.
-    - Divide el trabajo en tareas que fuercen la creación de componentes o funciones pequeñas y altamente reutilizables.
-    - Evita volver a explicar la propuesta, las especificaciones o el diseño en el texto de la tarea.
-
+    - Escribe cada tarea como un entregable atómico, concreto y testable
+      de forma aislada.
+    - Divide el trabajo en unidades que fuercen la creación de componentes
+      o funciones pequeñas y altamente reutilizables.
+    - No repitas la propuesta, las specs ni el diseño; la tarea debe ser
+      autoexplicativa con solo su título y criterio de aceptación.
+    - Indica si la tarea afecta solo al entorno local, solo a producción
+      o a ambos (p. ej., migración de Supabase).
