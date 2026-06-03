@@ -1,0 +1,49 @@
+// -----------------------------------------------------------------------------
+// UTILITIES / LAYOUT
+// -----------------------------------------------------------------------------
+@use '../settings/settings.spacing' as space;
+
+.u-container {
+  width: 100%;
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: space.$spacing-4;
+  padding-right: space.$spacing-4;
+}
+
+// Flexbox utilities
+.u-flex {
+  display: flex;
+}
+
+.u-flex-col {
+  flex-direction: column;
+}
+
+.u-items-center {
+  align-items: center;
+}
+
+.u-justify-center {
+  justify-content: center;
+}
+
+.u-justify-between {
+  justify-content: space-between;
+}
+
+// Spacing utilities
+.u-mt-4 {
+  margin-top: space.$spacing-4;
+}
+.u-mb-4 {
+  margin-bottom: space.$spacing-4;
+}
+.u-mb-8 {
+  margin-bottom: space.$spacing-8;
+}
+
+.u-text-center {
+  text-align: center;
+}
