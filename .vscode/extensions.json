@@ -1,4 +1,11 @@
 {
-  // For more information, visit: https://go.microsoft.com/fwlink/?linkid=827846
-  "recommendations": ["angular.ng-template"]
+  "recommendations": [
+    "angular.ng-template",
+    "dbaeumer.vscode-eslint",
+    "redhat.vscode-yaml",
+    "redhat.vscode-xml",
+    "esbenp.prettier-vscode",
+    "stylelint.vscode-stylelint",
+    "pflannery.vscode-versionlens"
+  ]
 }
