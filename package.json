@@ -1,0 +1,47 @@
+{
+  "name": "kachaoo-workspace",
+  "version": "1.0.0",
+  "private": true,
+  "workspaces": [
+    "dev/frontend",
+    "dev/backend"
+  ],
+  "packageManager": "npm@11.9.0",
+  "scripts": {
+    "start:frontend": "npm run start --workspace=frontend",
+    "start:backend": "npm run start --workspace=backend",
+    "build:frontend": "npm run build --workspace=frontend",
+    "build:backend": "npm run build --workspace=backend",
+    "pre-commit": "lint-staged",
+    "prepare": "husky"
+  },
+  "dependencies": {
+    "express": "^5.2.1"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "@types/express": "^5.0.6",
+    "@types/node": "^20.17.19",
+    "eslint": "^10.4.1",
+    "husky": "^9.1.7",
+    "lint-staged": "^15.4.3",
+    "prettier": "^3.8.1",
+    "typescript": "~5.9.2",
+    "typescript-eslint": "^8.60.1"
+  },
+  "lint-staged": {
+    "dev/frontend/**/*.{ts,js,html}": [
+      "eslint -c dev/frontend/eslint.config.js --fix",
+      "prettier --write"
+    ],
+    "dev/backend/**/*.{ts,js}": [
+      "eslint -c dev/backend/eslint.config.js --fix",
+      "prettier --write"
+    ],
+    "dev/frontend/**/*.{scss,css}": [
+      "stylelint --config dev/frontend/.stylelintrc.json --fix",
+      "prettier --write"
+    ],
+    "*.{json,md}": "prettier --write"
+  }
+}
