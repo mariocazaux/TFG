@@ -12,6 +12,7 @@
     "start:frontend": "npm run start --workspace=frontend",
     "start:backend": "npm run start --workspace=backend",
     "build:frontend": "npm run build --workspace=frontend",
+    "skill:update": "npx skills update",
     "pre-commit": "lint-staged",
     "prepare": "husky"
   },
@@ -29,7 +30,8 @@
     "lint-staged": "^17.0.7",
     "prettier": "^3.8.3",
     "typescript": "~5.9.3",
-    "typescript-eslint": "^8.60.1"
+    "typescript-eslint": "^8.60.1",
+    "skills": "^1.5.10"
   },
   "lint-staged": {
     "dev/frontend/**/*.{ts,js,html}": [
