@@ -1,0 +1,43 @@
+<div class="modal">
+  <div
+    class="modal__overlay"
+    (click)="onCancel()"
+    (keydown.enter)="onCancel()"
+    tabindex="0"
+    role="button"
+    aria-label="Cerrar modal"
+  ></div>
+
+  <div class="modal__content" style="max-width: 400px">
+    <div class="modal__header">
+      <h3 class="modal__title">{{ title() }}</h3>
+      <button class="modal__close-btn" (click)="onCancel()" aria-label="Cerrar modal">
+        <svg
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          class="modal__close-icon"
+        >
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
+    </div>
+
+    <div class="modal__body">
+      <p style="color: var(--color-text-secondary); margin-bottom: 1.5rem; line-height: 1.5">
+        {{ message() }}
+      </p>
+    </div>
+
+    <div class="modal__actions">
+      <button type="button" class="button button--secondary" (click)="onCancel()">
+        {{ cancelText() }}
+      </button>
+      <button type="button" class="button" [ngClass]="confirmColorClass()" (click)="onConfirm()">
+        {{ confirmText() }}
+      </button>
+    </div>
+  </div>
+</div>

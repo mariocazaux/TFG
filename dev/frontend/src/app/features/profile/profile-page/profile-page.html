@@ -70,4 +70,22 @@
       (vehicleAdded)="loadVehicles()"
     ></app-add-vehicle>
   }
+
+  @if (vehicleToDelete()) {
+    <app-confirm-modal
+      title="Eliminar vehículo"
+      [message]="
+        '¿Estás seguro de que deseas eliminar el vehículo ' +
+        vehicleToDelete()?.brand +
+        ' ' +
+        vehicleToDelete()?.model +
+        '? Esta acción no se puede deshacer.'
+      "
+      confirmText="Eliminar"
+      cancelText="Cancelar"
+      confirmColorClass="button--danger"
+      (confirmed)="confirmDelete()"
+      (canceled)="cancelDelete()"
+    ></app-confirm-modal>
+  }
 </div>

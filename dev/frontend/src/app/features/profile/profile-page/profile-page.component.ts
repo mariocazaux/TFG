@@ -2,6 +2,7 @@ import { Component, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { VehicleCardComponent } from '../components/vehicle-card/vehicle-card.component';
 import { AddVehicleComponent } from '../components/add-vehicle/add-vehicle.component';
+import { ConfirmModalComponent } from '../../../shared/components/confirm-modal/confirm-modal.component';
 import { AuthService } from '../../../core/services/auth.service';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../../environments/environment';
@@ -11,7 +12,7 @@ import { createClient } from '@supabase/supabase-js';
 @Component({
   selector: 'app-profile-page',
   standalone: true,
-  imports: [CommonModule, VehicleCardComponent, AddVehicleComponent],
+  imports: [CommonModule, VehicleCardComponent, AddVehicleComponent, ConfirmModalComponent],
   templateUrl: './profile-page.html',
   styleUrls: ['./profile-page.scss'],
 })
@@ -26,6 +27,9 @@ export class ProfilePageComponent implements OnInit {
   vehicles = signal<Vehicle[]>([]);
   isAddModalOpen = signal<boolean>(false);
   vehicleToEdit = signal<Vehicle | undefined>(undefined);
+
+  // Estado para el modal de confirmación de eliminación
+  vehicleToDelete = signal<Vehicle | undefined>(undefined);
 
   ngOnInit() {
     this.userName.set(this.authService.getUsername());
@@ -67,14 +71,25 @@ export class ProfilePageComponent implements OnInit {
   }
 
   onDeleteVehicle(vehicle: Vehicle) {
-    if (confirm('¿Estás seguro de que quieres eliminar este vehículo?')) {
+    this.vehicleToDelete.set(vehicle);
+  }
+
+  cancelDelete() {
+    this.vehicleToDelete.set(undefined);
+  }
+
+  confirmDelete() {
+    const vehicle = this.vehicleToDelete();
+    if (vehicle) {
       this.http.delete(`${environment.apiUrl}/vehicles/${vehicle.id}`).subscribe({
         next: () => {
           this.loadVehicles();
+          this.vehicleToDelete.set(undefined);
         },
         error: (err) => {
           console.error('Error al eliminar vehículo:', err);
           alert('Error al eliminar el vehículo.');
+          this.vehicleToDelete.set(undefined);
         },
       });
     }

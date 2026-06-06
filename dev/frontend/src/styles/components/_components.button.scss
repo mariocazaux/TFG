@@ -1,3 +1,4 @@
+@use 'sass:color';
 @use '../settings/settings.colors' as colors;
 @use '../settings/settings.spacing' as space;
 
@@ -70,6 +71,15 @@
     &:hover:not(:disabled) {
       background-color: colors.$color-gray-800;
       color: colors.$color-text-primary;
+    }
+  }
+
+  &--danger {
+    background-color: colors.$color-pink-500;
+    color: colors.$color-text-primary;
+
+    &:hover:not(:disabled) {
+      background-color: color.adjust(#ec4899, $lightness: -10%);
     }
   }
 }
