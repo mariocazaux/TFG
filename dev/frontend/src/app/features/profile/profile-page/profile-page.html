@@ -1,10 +1,21 @@
 <div class="profile">
   <div class="profile__header">
-    <div class="profile__avatar-container">
-      <img
-        src="https://st4.depositphotos.com/12613638/38132/v/450/depositphotos_381327364-stock-illustration-vector-icon-eps-flat-design.jpg"
-        alt="User Avatar"
-        class="profile__avatar"
+    <div
+      class="profile__avatar-container"
+      style="cursor: pointer"
+      tabindex="0"
+      role="button"
+      aria-label="Cambiar avatar"
+      (click)="avatarInput.click()"
+      (keydown.enter)="avatarInput.click()"
+    >
+      <img [src]="userAvatar()" alt="User Avatar" class="profile__avatar" />
+      <input
+        type="file"
+        #avatarInput
+        style="display: none"
+        accept="image/*"
+        (change)="onAvatarSelected($event)"
       />
     </div>
     <div class="profile__info">
@@ -36,7 +47,11 @@
 
     <div class="profile__garage-grid">
       @for (vehicle of vehicles(); track vehicle.id) {
-        <app-vehicle-card [vehicle]="vehicle"></app-vehicle-card>
+        <app-vehicle-card
+          [vehicle]="vehicle"
+          (edit)="onEditVehicle($event)"
+          (delete)="onDeleteVehicle($event)"
+        ></app-vehicle-card>
       } @empty {
         <div class="profile__garage-empty">
           <p>No tienes vehículos en tu garaje.</p>
@@ -49,6 +64,10 @@
   </section>
 
   @if (isAddModalOpen()) {
-    <app-add-vehicle (closed)="closeAddModal()" (vehicleAdded)="loadVehicles()"></app-add-vehicle>
+    <app-add-vehicle
+      [vehicleToEdit]="vehicleToEdit()"
+      (closed)="closeAddModal()"
+      (vehicleAdded)="loadVehicles()"
+    ></app-add-vehicle>
   }
 </div>

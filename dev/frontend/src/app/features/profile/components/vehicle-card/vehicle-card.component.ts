@@ -1,4 +1,4 @@
-import { Component, input } from '@angular/core';
+import { Component, input, output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Vehicle } from '../../../../core/models/domain.models';
 
@@ -11,4 +11,14 @@ import { Vehicle } from '../../../../core/models/domain.models';
 })
 export class VehicleCardComponent {
   vehicle = input.required<Vehicle>();
+  edit = output<Vehicle>();
+  delete = output<Vehicle>();
+
+  onEdit() {
+    this.edit.emit(this.vehicle());
+  }
+
+  onDelete() {
+    this.delete.emit(this.vehicle());
+  }
 }

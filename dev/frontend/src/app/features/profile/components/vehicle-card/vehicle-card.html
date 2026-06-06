@@ -10,5 +10,21 @@
   <div class="card__content">
     <h3 class="card__title">{{ vehicle().brand }} {{ vehicle().model }}</h3>
     <p class="card__subtitle">{{ vehicle().type === 'car' ? 'Coche' : 'Moto' }}</p>
+    <div style="margin-top: 10px; display: flex; gap: 10px">
+      <button
+        class="button button--secondary"
+        style="padding: 5px 10px; font-size: 0.8rem"
+        (click)="onEdit()"
+      >
+        Editar
+      </button>
+      <button
+        class="button button--secondary"
+        style="padding: 5px 10px; font-size: 0.8rem; border-color: red; color: red"
+        (click)="onDelete()"
+      >
+        Eliminar
+      </button>
+    </div>
   </div>
 </div>

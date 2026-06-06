@@ -10,7 +10,7 @@
 
   <div class="modal__content">
     <div class="modal__header">
-      <h3 class="modal__title">Añadir Vehículo</h3>
+      <h3 class="modal__title">{{ vehicleToEdit() ? 'Editar Vehículo' : 'Añadir Vehículo' }}</h3>
       <button class="modal__close-btn" (click)="onClose()" aria-label="Cerrar modal">
         <svg
           viewBox="0 0 24 24"
@@ -84,6 +84,84 @@
         />
       </div>
 
+      <div class="form-group">
+        <label for="color" class="form-group__label">Color</label>
+        <div style="position: relative; display: flex; align-items: center">
+          <div
+            class="color-indicator"
+            [style.backgroundColor]="getSelectedColorHex()"
+            style="
+              width: 16px;
+              height: 16px;
+              border-radius: 4px;
+              position: absolute;
+              left: 1rem;
+              pointer-events: none;
+              border: 1px solid rgba(255, 255, 255, 0.2);
+            "
+          ></div>
+          <select
+            id="color"
+            class="form-group__select"
+            formControlName="color"
+            style="padding-left: 2.75rem"
+          >
+            <option value="">Selecciona un color</option>
+            <option value="rojo">Rojo</option>
+            <option value="azul">Azul</option>
+            <option value="verde">Verde</option>
+            <option value="negro">Negro</option>
+            <option value="blanco">Blanco</option>
+            <option value="amarillo">Amarillo</option>
+            <option value="plata">Plata</option>
+            <option value="gris">Gris</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="engine_specs" class="form-group__label">Especificaciones del Motor</label>
+        <input
+          id="engine_specs"
+          type="text"
+          class="form-group__input"
+          formControlName="engine_specs"
+          placeholder="Ej: V8 4.0L Biturbo, Inline 4..."
+        />
+      </div>
+
+      @if (vehicleForm.get('type')?.value === 'motorcycle') {
+        <div class="form-group">
+          <label for="displacement_cc" class="form-group__label">Cilindrada (cc)</label>
+          <select id="displacement_cc" class="form-group__select" formControlName="displacement_cc">
+            <option [ngValue]="null">Selecciona la cilindrada</option>
+            <option [ngValue]="250">Hasta 250cc</option>
+            <option [ngValue]="750">Entre 300cc a 750cc</option>
+            <option [ngValue]="1000">Más de 750cc</option>
+          </select>
+        </div>
+      }
+
+      <div class="form-group">
+        <label for="image" class="form-group__label">Foto Principal</label>
+        <input
+          id="image"
+          type="file"
+          accept="image/*"
+          class="form-group__input"
+          (change)="onFileSelected($event)"
+        />
+        @if (imagePreview) {
+          <div class="image-preview" style="margin-top: 10px">
+            <img
+              [src]="imagePreview"
+              alt="Vista previa"
+              style="max-width: 100%; border-radius: 8px; max-height: 200px; object-fit: cover"
+            />
+          </div>
+        }
+      </div>
+
       <div class="modal__actions">
         <button type="button" class="button button--secondary" (click)="onClose()">Cancelar</button>
         <button
@@ -91,7 +169,13 @@
           class="button button--cyan"
           [disabled]="vehicleForm.invalid || isSubmitting()"
         >
-          {{ isSubmitting() ? 'Añadiendo...' : 'Añadir al Garaje' }}
+          {{
+            isSubmitting()
+              ? 'Guardando...'
+              : vehicleToEdit()
+                ? 'Guardar Cambios'
+                : 'Añadir al Garaje'
+          }}
         </button>
       </div>
     </form>

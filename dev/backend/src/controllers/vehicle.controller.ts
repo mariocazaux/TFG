@@ -29,7 +29,8 @@ export const createVehicle = async (req: Request, res: Response) => {
       return res.status(401).json({ error: 'Token inválido o expirado' });
     }
 
-    const { brand, model, year, type } = req.body;
+    const { brand, model, year, type, color, displacement_cc, engine_specs, main_image_url } =
+      req.body;
 
     if (!brand || !model || !year || !type) {
       return res.status(400).json({ error: 'Faltan campos obligatorios' });
@@ -44,11 +45,14 @@ export const createVehicle = async (req: Request, res: Response) => {
           model,
           year,
           type,
-          // Mock image for MVP
+          color,
+          displacement_cc,
+          engine_specs,
           main_image_url:
-            type === 'car'
+            main_image_url ||
+            (type === 'car'
               ? 'https://images.unsplash.com/photo-1552519507-da3b142c6e3d?auto=format&fit=crop&q=80&w=400'
-              : 'https://images.unsplash.com/photo-1606927131353-c0ad17d60b56?auto=format&fit=crop&q=80&w=400',
+              : 'https://images.unsplash.com/photo-1606927131353-c0ad17d60b56?auto=format&fit=crop&q=80&w=400'),
         },
       ])
       .select()
@@ -100,6 +104,105 @@ export const getVehicles = async (req: Request, res: Response) => {
     }
 
     return res.status(200).json({ vehicles: data });
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : 'Error interno desconocido';
+    return res.status(500).json({ error: 'Error interno del servidor', details: errorMessage });
+  }
+};
+
+export const deleteVehicle = async (req: Request, res: Response) => {
+  try {
+    const authHeader = req.headers.authorization;
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return res.status(401).json({ error: 'Falta el token de autorización' });
+    }
+    const token = authHeader.split(' ')[1];
+
+    const userSupabase = createClient(supabaseUrl, supabaseKey, {
+      global: {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      },
+    });
+
+    const {
+      data: { user },
+      error: userError,
+    } = await userSupabase.auth.getUser();
+    if (userError || !user) {
+      return res.status(401).json({ error: 'Token inválido o expirado' });
+    }
+
+    const { id } = req.params;
+
+    const { error } = await userSupabase
+      .from('vehicles')
+      .delete()
+      .eq('id', id)
+      .eq('owner_id', user.id);
+
+    if (error) {
+      return res.status(400).json({ error: error.message });
+    }
+
+    return res.status(200).json({ message: 'Vehículo eliminado exitosamente' });
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : 'Error interno desconocido';
+    return res.status(500).json({ error: 'Error interno del servidor', details: errorMessage });
+  }
+};
+
+export const updateVehicle = async (req: Request, res: Response) => {
+  try {
+    const authHeader = req.headers.authorization;
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return res.status(401).json({ error: 'Falta el token de autorización' });
+    }
+    const token = authHeader.split(' ')[1];
+
+    const userSupabase = createClient(supabaseUrl, supabaseKey, {
+      global: {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      },
+    });
+
+    const {
+      data: { user },
+      error: userError,
+    } = await userSupabase.auth.getUser();
+    if (userError || !user) {
+      return res.status(401).json({ error: 'Token inválido o expirado' });
+    }
+
+    const { id } = req.params;
+    const { brand, model, year, type, color, displacement_cc, engine_specs, main_image_url } =
+      req.body;
+
+    const { data, error } = await userSupabase
+      .from('vehicles')
+      .update({
+        brand,
+        model,
+        year,
+        type,
+        color,
+        displacement_cc,
+        engine_specs,
+        main_image_url,
+      })
+      .eq('id', id)
+      .eq('owner_id', user.id)
+      .select()
+      .single();
+
+    if (error) {
+      return res.status(400).json({ error: error.message });
+    }
+
+    return res.status(200).json({ message: 'Vehículo actualizado exitosamente', vehicle: data });
   } catch (error: unknown) {
     const errorMessage = error instanceof Error ? error.message : 'Error interno desconocido';
     return res.status(500).json({ error: 'Error interno del servidor', details: errorMessage });

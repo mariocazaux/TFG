@@ -23,6 +23,20 @@ export interface Vehicle {
   createdAt: string; // Mapped from created_at
 }
 
+export interface BackendVehicle {
+  id: string;
+  owner_id: string;
+  type: VehicleType;
+  brand: string;
+  model: string;
+  year: number;
+  color?: string;
+  displacement_cc?: number;
+  engine_specs?: string;
+  main_image_url?: string;
+  created_at: string;
+}
+
 export interface Route {
   id: string; // UUID
   creatorId: string; // UUID

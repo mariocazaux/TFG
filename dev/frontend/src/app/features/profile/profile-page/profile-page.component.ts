@@ -5,7 +5,8 @@ import { AddVehicleComponent } from '../components/add-vehicle/add-vehicle.compo
 import { AuthService } from '../../../core/services/auth.service';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../../environments/environment';
-import { Vehicle } from '../../../core/models/domain.models';
+import { Vehicle, BackendVehicle } from '../../../core/models/domain.models';
+import { createClient } from '@supabase/supabase-js';
 
 @Component({
   selector: 'app-profile-page',
@@ -19,8 +20,12 @@ export class ProfilePageComponent implements OnInit {
   private http = inject(HttpClient);
 
   userName = signal<string>('Usuario');
+  userAvatar = signal<string>(
+    'https://st4.depositphotos.com/12613638/38132/v/450/depositphotos_381327364-stock-illustration-vector-icon-eps-flat-design.jpg',
+  );
   vehicles = signal<Vehicle[]>([]);
   isAddModalOpen = signal<boolean>(false);
+  vehicleToEdit = signal<Vehicle | undefined>(undefined);
 
   ngOnInit() {
     this.userName.set(this.authService.getUsername());
@@ -28,7 +33,7 @@ export class ProfilePageComponent implements OnInit {
   }
 
   loadVehicles() {
-    this.http.get<{ vehicles: any[] }>(`${environment.apiUrl}/vehicles`).subscribe({
+    this.http.get<{ vehicles: BackendVehicle[] }>(`${environment.apiUrl}/vehicles`).subscribe({
       next: (response) => {
         const mappedVehicles: Vehicle[] = response.vehicles.map((v) => ({
           ...v,
@@ -48,10 +53,76 @@ export class ProfilePageComponent implements OnInit {
   }
 
   openAddModal() {
+    this.vehicleToEdit.set(undefined);
     this.isAddModalOpen.set(true);
   }
 
   closeAddModal() {
     this.isAddModalOpen.set(false);
+  }
+
+  onEditVehicle(vehicle: Vehicle) {
+    this.vehicleToEdit.set(vehicle);
+    this.isAddModalOpen.set(true);
+  }
+
+  onDeleteVehicle(vehicle: Vehicle) {
+    if (confirm('¿Estás seguro de que quieres eliminar este vehículo?')) {
+      this.http.delete(`${environment.apiUrl}/vehicles/${vehicle.id}`).subscribe({
+        next: () => {
+          this.loadVehicles();
+        },
+        error: (err) => {
+          console.error('Error al eliminar vehículo:', err);
+          alert('Error al eliminar el vehículo.');
+        },
+      });
+    }
+  }
+
+  async onAvatarSelected(event: Event) {
+    const file = (event.target as HTMLInputElement).files?.[0];
+    if (file) {
+      try {
+        const token = localStorage.getItem('kachaoo_auth_token');
+        if (token) {
+          const authSupabase = createClient(environment.supabaseUrl, environment.supabaseKey, {
+            global: {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            },
+          });
+          const fileExt = file.name.split('.').pop();
+          const fileName = `${new Date().getTime()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
+
+          const { error: uploadError } = await authSupabase.storage
+            .from('avatars')
+            .upload(fileName, file);
+
+          if (uploadError) {
+            console.error('Error uploading avatar', uploadError);
+            alert('Error al subir el avatar.');
+            return;
+          }
+
+          const {
+            data: { publicUrl },
+          } = authSupabase.storage.from('avatars').getPublicUrl(fileName);
+          this.userAvatar.set(publicUrl);
+
+          // Actualizar el perfil en la base de datos (se requerirá un endpoint o hacerlo por supabase)
+          // Como MVP, actualizaremos via Supabase directo usando el token
+          const {
+            data: { user },
+          } = await authSupabase.auth.getUser();
+          if (user) {
+            await authSupabase.from('profiles').update({ avatar_url: publicUrl }).eq('id', user.id);
+          }
+        }
+      } catch (err) {
+        console.error(err);
+      }
+    }
   }
 }

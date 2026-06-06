@@ -45,4 +45,47 @@
       }
     }
   }
+
+  &__select {
+    width: 100%;
+    background-color: rgb(3 7 18 / 50%);
+    border: 1px solid colors.$color-gray-800;
+    color: colors.$color-text-primary;
+    border-radius: 0.75rem;
+    padding: 0.75rem 1rem;
+    font-family: inherit;
+    transition: all 0.2s ease;
+    box-sizing: border-box;
+    appearance: none;
+    background-image: url('data:image/svg+xml;charset=US-ASCII,<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="%239ca3af" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg"><polyline points="6 9 12 15 18 9"></polyline></svg>');
+    background-repeat: no-repeat;
+    background-position: right 1rem center;
+    background-size: 1rem;
+    padding-right: 2.5rem;
+    cursor: pointer;
+
+    &::placeholder {
+      color: colors.$color-text-secondary;
+    }
+
+    &:focus {
+      outline: none;
+      border-color: colors.$color-cyan-500;
+      box-shadow: 0 0 0 1px colors.$color-cyan-500;
+    }
+
+    &--error {
+      border-color: colors.$color-pink-500;
+
+      &:focus {
+        border-color: colors.$color-pink-500;
+        box-shadow: 0 0 0 1px colors.$color-pink-500;
+      }
+    }
+
+    option {
+      background-color: #030712;
+      color: colors.$color-text-primary;
+    }
+  }
 }
