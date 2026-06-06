@@ -1,0 +1,62 @@
+@use '../settings/settings.colors' as colors;
+@use '../settings/settings.typography' as type;
+
+.card {
+  background-color: colors.$color-gray-900;
+  border: 1px solid colors.$color-gray-800;
+  border-radius: 1rem;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  box-shadow: 0 10px 25px -5px rgb(black, 0.5);
+
+  &:hover {
+    transform: translateY(-4px);
+    border-color: colors.$color-cyan-500;
+    box-shadow: 0 20px 25px -5px colors.$color-glow-cyan-strong;
+  }
+
+  &__image-container {
+    position: relative;
+    width: 100%;
+    height: 200px;
+  }
+
+  &__image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  &__badge {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background-color: rgba(colors.$color-background, 0.8);
+    backdrop-filter: blur(4px);
+    color: colors.$color-cyan-400;
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    font-size: type.$font-size-xs;
+    font-weight: type.$font-weight-bold;
+    border: 1px solid rgba(colors.$color-cyan-500, 0.3);
+  }
+
+  &__content {
+    padding: 1.5rem;
+  }
+
+  &__title {
+    font-size: type.$font-size-lg;
+    font-weight: type.$font-weight-bold;
+    color: colors.$color-text-primary;
+    margin: 0 0 0.5rem;
+  }
+
+  &__subtitle {
+    font-size: type.$font-size-sm;
+    color: colors.$color-text-secondary;
+    margin: 0;
+    text-transform: capitalize;
+  }
+}

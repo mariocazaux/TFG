@@ -1,0 +1,80 @@
+@use '../settings/settings.colors' as colors;
+@use '../settings/settings.typography' as type;
+
+.modal {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+
+  &__overlay {
+    position: absolute;
+    inset: 0;
+    background-color: rgba(colors.$color-background, 0.8);
+    backdrop-filter: blur(8px);
+  }
+
+  &__content {
+    position: relative;
+    z-index: 101;
+    background-color: colors.$color-gray-900;
+    border: 1px solid colors.$color-gray-800;
+    border-radius: 1.5rem;
+    width: 100%;
+    max-width: 28rem;
+    padding: 2rem;
+    box-shadow: 0 25px 50px -12px rgb(black, 0.5);
+  }
+
+  &__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1.5rem;
+  }
+
+  &__title {
+    font-size: type.$font-size-2xl;
+    font-weight: type.$font-weight-bold;
+    color: colors.$color-text-primary;
+    margin: 0;
+  }
+
+  &__close-btn {
+    background: transparent;
+    border: none;
+    color: colors.$color-text-muted;
+    cursor: pointer;
+    padding: 0.5rem;
+    border-radius: 0.5rem;
+    transition: all 0.2s ease;
+
+    &:hover {
+      color: colors.$color-text-primary;
+      background-color: rgba(colors.$color-gray-800, 0.5);
+    }
+  }
+
+  &__close-icon {
+    width: 1.5rem;
+    height: 1.5rem;
+  }
+
+  &__body {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+
+  &__actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    margin-top: 1rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid colors.$color-gray-800;
+  }
+}

@@ -43,36 +43,7 @@
     position: absolute;
     top: space.$spacing-8;
     left: space.$spacing-8;
-    display: flex;
-    align-items: center;
-    gap: space.$spacing-2;
     z-index: 20;
-    text-decoration: none;
-  }
-
-  &__brand-icon {
-    color: colors.$color-cyan-400;
-    width: 2rem;
-    height: 2rem;
-    transition: all 0.3s ease;
-
-    .group:hover & {
-      filter: drop-shadow(0 0 8px colors.$color-glow-cyan-strong);
-    }
-  }
-
-  &__brand-text {
-    font-weight: 700;
-    font-size: 1.5rem;
-    letter-spacing: -0.05em;
-    background-clip: text;
-    color: transparent;
-    background-image: linear-gradient(
-      to right,
-      colors.$color-cyan-400,
-      colors.$color-purple-500,
-      colors.$color-pink-500
-    );
   }
 
   &__card {
@@ -142,25 +113,11 @@
     gap: space.$spacing-4;
   }
 
-  &__form-group {
-    display: flex;
-    flex-direction: column;
-    gap: 0.25rem;
-  }
-
+  // Estilos de form extraídos a _components.form.scss
   &__label-row {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-left: 0.25rem;
-  }
-
-  &__label {
-    font-size: 0.75rem;
-    font-weight: 600;
-    color: colors.$color-text-secondary;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
     margin-left: 0.25rem;
   }
 
@@ -187,35 +144,9 @@
     pointer-events: none;
   }
 
-  &__input {
-    width: 100%;
-    background-color: rgb(3 7 18 / 50%);
-    border: 1px solid colors.$color-gray-800;
-    color: colors.$color-text-primary;
-    border-radius: 0.75rem;
-    padding: 0.75rem 1rem 0.75rem 2.5rem;
-    font-family: inherit;
-    transition: all 0.2s ease;
-    box-sizing: border-box;
-
-    &::placeholder {
-      color: colors.$color-text-secondary; // #9ca3af approx
-    }
-
-    &:focus {
-      outline: none;
-      border-color: colors.$color-cyan-500;
-      box-shadow: 0 0 0 1px colors.$color-cyan-500;
-    }
-
-    &--error {
-      border-color: colors.$color-pink-500;
-
-      &:focus {
-        border-color: colors.$color-pink-500;
-        box-shadow: 0 0 0 1px colors.$color-pink-500;
-      }
-    }
+  // Se ajusta el padding del input para dejar espacio al ícono
+  &__input-with-icon {
+    padding-left: 2.5rem !important;
   }
 
   &__error-text {

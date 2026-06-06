@@ -1,0 +1,14 @@
+<div class="card">
+  <div class="card__image-container">
+    <img
+      [src]="vehicle().mainImageUrl || 'assets/images/placeholder-car.svg'"
+      alt="{{ vehicle().brand }} {{ vehicle().model }}"
+      class="card__image"
+    />
+    <div class="card__badge">{{ vehicle().year }}</div>
+  </div>
+  <div class="card__content">
+    <h3 class="card__title">{{ vehicle().brand }} {{ vehicle().model }}</h3>
+    <p class="card__subtitle">{{ vehicle().type === 'car' ? 'Coche' : 'Moto' }}</p>
+  </div>
+</div>

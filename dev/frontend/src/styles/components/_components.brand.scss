@@ -1,0 +1,38 @@
+@use '../settings/settings.colors' as colors;
+@use '../settings/settings.typography' as type;
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 2rem;
+  text-decoration: none;
+
+  &__icon {
+    color: colors.$color-cyan-400;
+    width: 2rem;
+    height: 2rem;
+    transition: all 0.3s ease;
+  }
+
+  &__text {
+    font-weight: type.$font-weight-bold;
+    font-size: type.$font-size-2xl;
+    letter-spacing: -0.05em;
+    background-clip: text;
+    background-clip: text;
+    color: transparent;
+    background-image: linear-gradient(
+      to right,
+      colors.$color-cyan-400,
+      colors.$color-purple-500,
+      colors.$color-pink-500
+    );
+  }
+
+  // Hover effect for the icon glow
+  &:hover &__icon {
+    filter: drop-shadow(0 0 8px colors.$color-glow-cyan);
+    transform: scale(1.05);
+  }
+}

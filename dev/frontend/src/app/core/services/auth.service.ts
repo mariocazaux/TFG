@@ -48,14 +48,44 @@ export class AuthService {
   }
 
   private setToken(token: string): void {
-    localStorage.setItem('kachaoo_auth_token', token);
+    if (typeof window !== 'undefined' && window.localStorage) {
+      localStorage.setItem('kachaoo_auth_token', token);
+    }
   }
 
   getToken(): string | null {
-    return localStorage.getItem('kachaoo_auth_token');
+    if (typeof window !== 'undefined' && window.localStorage) {
+      return localStorage.getItem('kachaoo_auth_token');
+    }
+    return null;
+  }
+
+  getUsername(): string {
+    const token = this.getToken();
+    if (!token) {
+      return 'Usuario';
+    }
+    try {
+      const payloadBase64Url = token.split('.')[1];
+      const payloadBase64 = payloadBase64Url.replace(/-/g, '+').replace(/_/g, '/');
+      const payloadJson = decodeURIComponent(
+        atob(payloadBase64)
+          .split('')
+          .map(function (c) {
+            return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+          })
+          .join(''),
+      );
+      const payload = JSON.parse(payloadJson);
+      return payload.user_metadata?.username || payload.email?.split('@')[0] || 'Usuario';
+    } catch {
+      return 'Usuario';
+    }
   }
 
   logout(): void {
-    localStorage.removeItem('kachaoo_auth_token');
+    if (typeof window !== 'undefined' && window.localStorage) {
+      localStorage.removeItem('kachaoo_auth_token');
+    }
   }
 }

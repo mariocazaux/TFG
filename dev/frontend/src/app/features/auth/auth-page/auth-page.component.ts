@@ -72,7 +72,7 @@ export class AuthPageComponent implements OnInit {
       this.authService.login({ email: formValue.email, password: formValue.password }).subscribe({
         next: () => {
           this.isLoading.set(false);
-          this.router.navigate(['/']); // Redirect after successful login
+          this.router.navigate(['/app/profile']); // Redirect after successful login
         },
         error: (err) => {
           this.isLoading.set(false);
@@ -89,7 +89,7 @@ export class AuthPageComponent implements OnInit {
         .subscribe({
           next: () => {
             this.isLoading.set(false);
-            this.router.navigate(['/']); // Redirect after successful registration
+            this.router.navigate(['/app/profile']); // Redirect after successful registration
           },
           error: (err) => {
             this.isLoading.set(false);

@@ -1,0 +1,54 @@
+<div class="profile">
+  <div class="profile__header">
+    <div class="profile__avatar-container">
+      <img
+        src="https://st4.depositphotos.com/12613638/38132/v/450/depositphotos_381327364-stock-illustration-vector-icon-eps-flat-design.jpg"
+        alt="User Avatar"
+        class="profile__avatar"
+      />
+    </div>
+    <div class="profile__info">
+      <h1 class="profile__name">{{ userName() }}</h1>
+      <p class="profile__bio">Explorador de rutas | Amante del motor</p>
+    </div>
+  </div>
+
+  <div class="profile__stats">
+    <div class="stat">
+      <span class="stat__value">12</span>
+      <span class="stat__label">Rutas</span>
+    </div>
+    <div class="stat">
+      <span class="stat__value">4</span>
+      <span class="stat__label">Vehículos</span>
+    </div>
+    <div class="stat">
+      <span class="stat__value">1.2k</span>
+      <span class="stat__label">Seguidores</span>
+    </div>
+  </div>
+
+  <section class="profile__garage">
+    <div class="profile__garage-header">
+      <h2 class="profile__garage-title">Mi Garaje</h2>
+      <button class="button button--cyan button--small" (click)="openAddModal()">+ Añadir</button>
+    </div>
+
+    <div class="profile__garage-grid">
+      @for (vehicle of vehicles(); track vehicle.id) {
+        <app-vehicle-card [vehicle]="vehicle"></app-vehicle-card>
+      } @empty {
+        <div class="profile__garage-empty">
+          <p>No tienes vehículos en tu garaje.</p>
+          <button class="button button--secondary" (click)="openAddModal()">
+            Añadir tu primer vehículo
+          </button>
+        </div>
+      }
+    </div>
+  </section>
+
+  @if (isAddModalOpen()) {
+    <app-add-vehicle (closed)="closeAddModal()" (vehicleAdded)="loadVehicles()"></app-add-vehicle>
+  }
+</div>

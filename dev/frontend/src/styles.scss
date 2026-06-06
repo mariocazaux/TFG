@@ -21,8 +21,11 @@
 // @forward 'styles/objects/objects.layout';
 
 // 6. COMPONENTS: Componentes específicos con cosmética (UI)
-// Los componentes de Angular se importarán en sus propios archivos SCSS,
-// pero aquí irían estilos de componentes globales si existieran.
+@forward 'styles/components/components.button';
+@forward 'styles/components/components.form';
+@forward 'styles/components/components.brand';
+@forward 'styles/components/components.modal';
+@forward 'styles/components/components.card';
 
 // 7. UTILITIES: Clases de utilidad y helpers específicos
 @forward 'styles/utilities/utilities.layout';

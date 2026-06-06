@@ -1,0 +1,147 @@
+@use '../../../../styles/settings/settings.colors' as colors;
+@use '../../../../styles/settings/settings.typography' as type;
+
+.layout {
+  display: flex;
+  height: 100vh;
+  width: 100%;
+  background-color: colors.$color-background;
+  color: colors.$color-text-primary;
+  overflow: hidden;
+
+  &__sidebar {
+    display: none; // Hidden on mobile
+    flex-direction: column;
+    width: 250px;
+    background-color: colors.$color-gray-900;
+    border-right: 1px solid colors.$color-gray-800;
+    padding: 1.5rem;
+
+    @media (width >= 1024px) {
+      display: flex;
+    }
+  }
+
+  &__nav {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    flex: 1;
+  }
+
+  &__nav-link {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 1rem;
+    color: colors.$color-text-secondary;
+    text-decoration: none;
+    border-radius: 0.5rem;
+    transition: all 0.2s ease;
+    font-weight: type.$font-weight-medium;
+
+    &:hover:not(&--disabled) {
+      background-color: colors.$color-gray-800;
+      color: colors.$color-text-primary;
+    }
+
+    &--active {
+      background-color: rgba(colors.$color-cyan-500, 0.1);
+      color: colors.$color-cyan-400;
+    }
+
+    &--disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+  }
+
+  &__nav-icon {
+    width: 1.25rem;
+    height: 1.25rem;
+  }
+
+  &__footer {
+    margin-top: auto;
+    padding-top: 1rem;
+    border-top: 1px solid colors.$color-gray-800;
+  }
+
+  &__logout-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    width: 100%;
+    padding: 0.75rem 1rem;
+    background: transparent;
+    border: none;
+    color: colors.$color-pink-500;
+    cursor: pointer;
+    border-radius: 0.5rem;
+    transition: background-color 0.2s ease;
+    font-weight: type.$font-weight-medium;
+
+    &:hover {
+      background-color: rgba(colors.$color-pink-500, 0.1);
+    }
+  }
+
+  &__logout-icon {
+    width: 1.25rem;
+    height: 1.25rem;
+  }
+
+  &__main {
+    flex: 1;
+    overflow-y: auto;
+    position: relative;
+    padding-bottom: 4rem; // Space for bottom nav on mobile
+
+    @media (width >= 1024px) {
+      padding-bottom: 0;
+    }
+  }
+
+  &__bottom-nav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 4rem;
+    background-color: colors.$color-gray-900;
+    border-top: 1px solid colors.$color-gray-800;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    z-index: 50;
+
+    @media (width >= 1024px) {
+      display: none;
+    }
+  }
+
+  &__bottom-nav-link {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.25rem;
+    color: colors.$color-text-secondary;
+    text-decoration: none;
+    font-size: type.$font-size-xs;
+    transition: color 0.2s ease;
+
+    &--active {
+      color: colors.$color-cyan-400;
+    }
+
+    &--disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+  }
+
+  &__bottom-nav-icon {
+    width: 1.5rem;
+    height: 1.5rem;
+  }
+}
