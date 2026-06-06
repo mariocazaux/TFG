@@ -14,6 +14,12 @@ module.exports = defineConfig([
       tseslint.configs.stylistic,
       angular.configs.tsRecommended,
     ],
+    languageOptions: {
+      parserOptions: {
+        project: ['./tsconfig.app.json', './tsconfig.spec.json'],
+        tsconfigRootDir: __dirname,
+      },
+    },
     processor: angular.processInlineTemplates,
     rules: {
       ...sharedRules,

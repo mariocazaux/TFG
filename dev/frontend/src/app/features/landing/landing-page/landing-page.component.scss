@@ -1,6 +1,10 @@
 @use '../../../../styles/settings/settings.colors' as colors;
 @use '../../../../styles/settings/settings.spacing' as space;
 
+// -----------------------------------------------------------------------------
+// MAIN STYLES
+// -----------------------------------------------------------------------------
+
 // Contenedor principal
 .landing {
   min-height: 100vh;
@@ -40,25 +44,36 @@
   z-index: 10;
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  padding: space.$spacing-6 space.$spacing-6;
-
-  @media (width >= 1024px) {
-    padding-left: space.$spacing-12;
-    padding-right: space.$spacing-12;
-  }
+  justify-content: flex-end;
+  padding: space.$spacing-8 space.$spacing-8;
 
   &__brand {
+    position: absolute;
+    top: space.$spacing-8;
+    left: space.$spacing-8;
     display: flex;
     align-items: center;
     gap: space.$spacing-2;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+
+    &:hover .header__logo-icon {
+      filter: drop-shadow(0 0 10px colors.$color-cyan-400);
+    }
+  }
+
+  &__logo-icon {
+    width: 2rem;
+    height: 2rem;
+    color: colors.$color-cyan-400;
+    transition: filter 0.3s ease;
   }
 
   &__logo {
     font-weight: 700;
     font-size: 1.5rem;
     letter-spacing: -0.05em;
-    background-clip: text;
     background-clip: text;
     color: transparent;
     background-image: linear-gradient(
@@ -124,14 +139,9 @@
     margin-bottom: space.$spacing-6;
     letter-spacing: -0.025em;
     line-height: 1.1;
-
-    @media (width >= 768px) {
-      font-size: 4.5rem;
-    }
   }
 
   &__title-highlight {
-    background-clip: text;
     background-clip: text;
     color: transparent;
     background-image: linear-gradient(
@@ -150,24 +160,16 @@
     max-width: 42rem; // max-w-2xl
     margin-left: auto;
     margin-right: auto;
-
-    @media (width >= 768px) {
-      font-size: 1.25rem;
-    }
   }
 
   &__actions {
     display: flex;
     flex-direction: column;
     gap: space.$spacing-4;
-
-    @media (width >= 640px) {
-      flex-direction: row;
-    }
   }
 }
 
-// Global Button Classes (Scoped here temporarily, normally in components layer)
+// Global Button Classes
 .button {
   display: inline-flex;
   align-items: center;
@@ -213,3 +215,29 @@
     }
   }
 }
+
+// -----------------------------------------------------------------------------
+// RESPONSIVE
+// -----------------------------------------------------------------------------
+
+@media (width >= 640px) {
+  .hero {
+    &__actions {
+      flex-direction: row;
+    }
+  }
+}
+
+@media (width >= 768px) {
+  .hero {
+    &__title {
+      font-size: 4.5rem;
+    }
+
+    &__subtitle {
+      font-size: 1.25rem;
+    }
+  }
+}
+
+// Eliminado media query de width >= 1024px que cambiaba el padding del header para mantener coherencia con auth

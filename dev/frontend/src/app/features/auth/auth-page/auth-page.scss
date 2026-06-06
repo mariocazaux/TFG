@@ -1,0 +1,287 @@
+@use '../../../../styles/settings/settings.colors' as colors;
+@use '../../../../styles/settings/settings.spacing' as space;
+
+// -----------------------------------------------------------------------------
+// MAIN STYLES
+// -----------------------------------------------------------------------------
+
+.auth {
+  min-height: 100vh;
+  background-color: colors.$color-background;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: space.$spacing-4;
+  position: relative;
+  overflow: hidden;
+
+  &__blob {
+    position: absolute;
+    width: 24rem;
+    height: 24rem;
+    border-radius: 9999px;
+    filter: blur(100px);
+    pointer-events: none;
+
+    &--cyan {
+      top: 25%;
+      left: 25%;
+      background-color: colors.$color-glow-cyan-strong;
+      opacity: 0.2;
+    }
+
+    &--purple {
+      bottom: 25%;
+      right: 25%;
+      background-color: colors.$color-glow-purple;
+      opacity: 0.2;
+    }
+  }
+
+  &__brand {
+    position: absolute;
+    top: space.$spacing-8;
+    left: space.$spacing-8;
+    display: flex;
+    align-items: center;
+    gap: space.$spacing-2;
+    z-index: 20;
+    text-decoration: none;
+  }
+
+  &__brand-icon {
+    color: colors.$color-cyan-400;
+    width: 2rem;
+    height: 2rem;
+    transition: all 0.3s ease;
+
+    .group:hover & {
+      filter: drop-shadow(0 0 8px colors.$color-glow-cyan-strong);
+    }
+  }
+
+  &__brand-text {
+    font-weight: 700;
+    font-size: 1.5rem;
+    letter-spacing: -0.05em;
+    background-clip: text;
+    color: transparent;
+    background-image: linear-gradient(
+      to right,
+      colors.$color-cyan-400,
+      colors.$color-purple-500,
+      colors.$color-pink-500
+    );
+  }
+
+  &__card {
+    width: 100%;
+    max-width: 28rem; // max-w-md
+    background-color: rgb(17 24 39 / 80%); // bg-gray-900/80
+    backdrop-filter: blur(24px);
+    border: 1px solid colors.$color-gray-800;
+    border-radius: 1.5rem; // 3xl
+    padding: space.$spacing-8;
+    position: relative;
+    z-index: 10;
+    box-shadow: 0 25px 50px -12px rgb(0 0 0 / 25%);
+  }
+
+  &__toggle {
+    display: flex;
+    background-color: rgb(3 7 18 / 50%);
+    padding: 0.25rem;
+    border-radius: 0.75rem;
+    margin-bottom: space.$spacing-8;
+    border: 1px solid colors.$color-gray-800;
+  }
+
+  &__toggle-btn {
+    flex: 1;
+    padding: space.$spacing-2 0;
+    font-size: 0.875rem;
+    font-weight: 700;
+    border-radius: 0.5rem;
+    transition: all 0.2s ease;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    color: colors.$color-text-secondary;
+
+    &:hover:not(.auth__toggle-btn--active) {
+      color: colors.$color-text-primary;
+    }
+
+    &--active {
+      background-color: colors.$color-gray-800;
+      color: colors.$color-text-primary;
+      box-shadow: 0 4px 6px -1px rgb(0 0 0 / 10%);
+    }
+  }
+
+  &__header {
+    margin-bottom: space.$spacing-8;
+  }
+
+  &__title {
+    font-size: 1.5rem;
+    font-weight: 900;
+    color: colors.$color-text-primary;
+    margin-bottom: space.$spacing-2;
+  }
+
+  &__subtitle {
+    color: colors.$color-text-secondary;
+    font-size: 0.875rem;
+  }
+
+  &__form {
+    display: flex;
+    flex-direction: column;
+    gap: space.$spacing-4;
+  }
+
+  &__form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  &__label-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-left: 0.25rem;
+  }
+
+  &__label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: colors.$color-text-secondary;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-left: 0.25rem;
+  }
+
+  &__forgot-link {
+    font-size: 0.75rem;
+    color: colors.$color-cyan-400;
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+
+  &__input-wrapper {
+    position: relative;
+  }
+
+  &__input-icon {
+    position: absolute;
+    left: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: colors.$color-text-secondary;
+    pointer-events: none;
+  }
+
+  &__input {
+    width: 100%;
+    background-color: rgb(3 7 18 / 50%);
+    border: 1px solid colors.$color-gray-800;
+    color: colors.$color-text-primary;
+    border-radius: 0.75rem;
+    padding: 0.75rem 1rem 0.75rem 2.5rem;
+    font-family: inherit;
+    transition: all 0.2s ease;
+    box-sizing: border-box;
+
+    &::placeholder {
+      color: colors.$color-text-secondary; // #9ca3af approx
+    }
+
+    &:focus {
+      outline: none;
+      border-color: colors.$color-cyan-500;
+      box-shadow: 0 0 0 1px colors.$color-cyan-500;
+    }
+
+    &--error {
+      border-color: colors.$color-pink-500;
+
+      &:focus {
+        border-color: colors.$color-pink-500;
+        box-shadow: 0 0 0 1px colors.$color-pink-500;
+      }
+    }
+  }
+
+  &__error-text {
+    font-size: 0.75rem;
+    color: colors.$color-pink-500;
+    margin-left: 0.25rem;
+  }
+
+  &__server-error {
+    background-color: rgb(236 72 153 / 10%);
+    border: 1px solid colors.$color-pink-500;
+    color: colors.$color-pink-500;
+    padding: space.$spacing-3;
+    border-radius: 0.5rem;
+    font-size: 0.875rem;
+    text-align: center;
+  }
+
+  &__submit-btn {
+    width: 100%;
+    background: linear-gradient(to right, colors.$color-cyan-500, colors.$color-blue-500);
+    color: colors.$color-text-primary;
+    font-weight: 700;
+    padding: 0.875rem;
+    border-radius: 0.75rem;
+    border: none;
+    margin-top: space.$spacing-6;
+    box-shadow: 0 0 20px rgb(34 211 238 / 30%);
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: space.$spacing-2;
+    cursor: pointer;
+
+    &:hover:not(:disabled) {
+      background: linear-gradient(to right, colors.$color-cyan-400, #60a5fa);
+      box-shadow: 0 0 25px rgb(34 211 238 / 50%);
+    }
+
+    &:disabled {
+      opacity: 0.7;
+      cursor: not-allowed;
+    }
+
+    .group:hover & {
+      .auth__submit-icon {
+        transform: translateX(4px);
+      }
+    }
+  }
+
+  &__submit-icon {
+    transition: transform 0.2s ease;
+  }
+}
+
+// -----------------------------------------------------------------------------
+// RESPONSIVE
+// -----------------------------------------------------------------------------
+
+@media (width >= 768px) {
+  // Ejemplos de media queries extraídos aquí según la regla
+  .auth {
+    &__card {
+      padding: space.$spacing-10;
+    }
+  }
+}
