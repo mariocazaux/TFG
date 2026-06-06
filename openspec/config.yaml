@@ -33,7 +33,7 @@ context: |
     package_manager: npm
 
   Backend:
-    runtime: Node.js v24
+    runtime: Node.js v26
     framework: Express
     api_style: RESTful / JSON
     auth: JWT (access + refresh tokens)
@@ -99,11 +99,12 @@ context: |
   # ── Prototipo y Diseño ──────────────────────────────────────────────────────
   Prototipo:
     herramienta: Figma
-    url: https://www.figma.com/make/1JIqe4ZFWdNHd2gvZPHywf/Motorist-and-Car-Enthusiast-App?t=X87HuckHr5HSeZRQ-0
+    url: c:\Users\Mario\Desktop\UNI\Repositorios\TFG\dev\figma\ProyectoFigma
     notas: >
-      El prototipo en Figma es la fuente de verdad visual. Cualquier decisión
-      de UI/UX debe validarse contra él antes de implementar. Los componentes
-      Angular deben reflejar fielmente los diseños aprobados.
+      La FUENTE DE VERDAD ABSOLUTA del diseño y los estilos es el proyecto
+      exportado de Figma que se encuentra localmente en la carpeta:
+      c:\Users\Mario\Desktop\UNI\Repositorios\TFG\dev\figma\ProyectoFigma.
+      Los componentes Angular deben reflejar fielmente los diseños de esta carpeta.
 
   # ── Directrices de Diseño (UI/UX) ──────────────────────────────────────────
   Diseño:
@@ -113,6 +114,25 @@ context: |
   # ── Reglas de Desarrollo ────────────────────────────────────────────────────
   Desarrollo:
     principios: SOLID, DRY
+    normas_estrictas_ia: >
+      - NO INVENTES COSAS: Cuando no puedas hacer algo o tengas dudas sobre qué
+        cambio escoger, SIEMPRE PREGUNTA al usuario.
+      - IMPORTACIONES BACKEND: A la hora de importar CUALQUIER archivo local en Node ESM
+        (rutas, controladores, configuración, utilidades), como estamos ejecutando Node 26 de forma
+        nativa (con soporte TS integrado sin compilar previamente), REVISA SIEMPRE que TODAS las
+        importaciones terminen con la extensión .ts explícita (ej. '../routes/auth.routes.ts' o
+        '../controllers/auth.controller.ts'). Node no infiere las extensiones en disco nativamente.
+      - COMPROBACIÓN PREVIA: Cuando vayas a sugerir o implementar algún cambio,
+        PRIMERO pasa tests y comprueba que compila sin errores TANTO EN EL FRONTEND COMO EN EL BACKEND
+        (esto evita entregar tareas con errores de linters, tsconfigRootDir o imports fallidos).
+      - FORMULARIOS Y ACCESIBILIDAD: A la hora de desarrollar un formulario en el Frontend (Angular HTML),
+        asegúrate siempre de poner los atributos 'id' en los <input> y los correspondientes 'for' en los <label>
+        para cumplir con las reglas de accesibilidad y no generar errores de ESLint.
+    scss: >
+      - UTILIZA EL @forward O EL @use, NO EL @import.
+      - En todos los SCSS de las interfaces, EXTRAE los @media queries y
+        agrúpalos al final en un apartado específico que se llame RESPONSIVE.
+        NO hagas un @media responsive por cada clase o función de SCSS.
     modularidad: >
       Priorizar funciones pequeñas, atómicas y altamente reutilizables
       en todo el stack (componentes Angular, servicios Express, helpers).

@@ -1,0 +1,199 @@
+<div class="auth">
+  <!-- Background Neon Blobs -->
+  <div class="auth__blob auth__blob--cyan"></div>
+  <div class="auth__blob auth__blob--purple"></div>
+
+  <a routerLink="/" class="auth__brand group">
+    <!-- SVG Flame Icon -->
+    <svg
+      class="auth__brand-icon group-hover-glow"
+      xmlns="http://www.w3.org/2000/svg"
+      width="32"
+      height="32"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    >
+      <path
+        d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"
+      ></path>
+    </svg>
+    <span class="auth__brand-text">Kachaoo</span>
+  </a>
+
+  <div class="auth__card">
+    <!-- Toggle Login/Register -->
+    <div class="auth__toggle">
+      <button
+        type="button"
+        class="auth__toggle-btn"
+        [class.auth__toggle-btn--active]="isLogin()"
+        (click)="toggleMode(true)"
+      >
+        Iniciar Sesión
+      </button>
+      <button
+        type="button"
+        class="auth__toggle-btn"
+        [class.auth__toggle-btn--active]="!isLogin()"
+        (click)="toggleMode(false)"
+      >
+        Registrarse
+      </button>
+    </div>
+
+    <div class="auth__header">
+      <h2 class="auth__title">
+        {{ isLogin() ? 'Bienvenido de nuevo' : 'Únete a la ruta' }}
+      </h2>
+      <p class="auth__subtitle">
+        {{
+          isLogin()
+            ? 'Introduce tus credenciales para acceder a tu garaje.'
+            : 'Crea tu cuenta y empieza a descubrir los mejores trazados.'
+        }}
+      </p>
+    </div>
+
+    <form [formGroup]="authForm" (ngSubmit)="onSubmit()" class="auth__form">
+      @if (!isLogin()) {
+        <div class="auth__form-group">
+          <label class="auth__label" for="username">Nombre de Usuario</label>
+          <div class="auth__input-wrapper">
+            <svg
+              class="auth__input-icon"
+              xmlns="http://www.w3.org/2000/svg"
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path>
+              <circle cx="12" cy="7" r="4"></circle>
+            </svg>
+            <input
+              id="username"
+              type="text"
+              formControlName="username"
+              placeholder="Ej. AlexRider"
+              class="auth__input"
+              [class.auth__input--error]="
+                authForm.get('username')?.invalid && authForm.get('username')?.touched
+              "
+            />
+          </div>
+          @if (authForm.get('username')?.invalid && authForm.get('username')?.touched) {
+            <span class="auth__error-text">El nombre de usuario es obligatorio.</span>
+          }
+        </div>
+      }
+
+      <div class="auth__form-group">
+        <label class="auth__label" for="email">Correo Electrónico</label>
+        <div class="auth__input-wrapper">
+          <svg
+            class="auth__input-icon"
+            xmlns="http://www.w3.org/2000/svg"
+            width="18"
+            height="18"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <rect width="20" height="16" x="2" y="4" rx="2"></rect>
+            <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path>
+          </svg>
+          <input
+            id="email"
+            type="email"
+            formControlName="email"
+            placeholder="tu@email.com"
+            class="auth__input"
+            [class.auth__input--error]="
+              authForm.get('email')?.invalid && authForm.get('email')?.touched
+            "
+          />
+        </div>
+        @if (authForm.get('email')?.invalid && authForm.get('email')?.touched) {
+          <span class="auth__error-text">Introduce un correo válido.</span>
+        }
+      </div>
+
+      <div class="auth__form-group">
+        <div class="auth__label-row">
+          <label class="auth__label" for="password">Contraseña</label>
+          @if (isLogin()) {
+            <a href="#" class="auth__forgot-link">¿Olvidaste tu contraseña?</a>
+          }
+        </div>
+        <div class="auth__input-wrapper">
+          <svg
+            class="auth__input-icon"
+            xmlns="http://www.w3.org/2000/svg"
+            width="18"
+            height="18"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <rect width="18" height="11" x="3" y="11" rx="2" ry="2"></rect>
+            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+          </svg>
+          <input
+            id="password"
+            type="password"
+            formControlName="password"
+            placeholder="••••••••"
+            class="auth__input"
+            [class.auth__input--error]="
+              authForm.get('password')?.invalid && authForm.get('password')?.touched
+            "
+          />
+        </div>
+        @if (authForm.get('password')?.invalid && authForm.get('password')?.touched) {
+          <span class="auth__error-text">La contraseña debe tener al menos 6 caracteres.</span>
+        }
+      </div>
+
+      @if (errorMessage()) {
+        <div class="auth__server-error">
+          {{ errorMessage() }}
+        </div>
+      }
+
+      <button type="submit" class="auth__submit-btn" [disabled]="authForm.invalid || isLoading()">
+        {{ isLoading() ? 'Procesando...' : isLogin() ? 'Acceder' : 'Comenzar Motor' }}
+        @if (!isLoading()) {
+          <svg
+            class="auth__submit-icon"
+            xmlns="http://www.w3.org/2000/svg"
+            width="18"
+            height="18"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path d="M5 12h14"></path>
+            <path d="m12 5 7 7-7 7"></path>
+          </svg>
+        }
+      </button>
+    </form>
+  </div>
+</div>

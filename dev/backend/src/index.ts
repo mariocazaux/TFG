@@ -1,5 +1,7 @@
+import 'dotenv/config';
 import express, { type Request, type Response } from 'express';
 import cors from 'cors';
+import authRoutes from './routes/auth.routes.ts';
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -22,12 +24,19 @@ app.use(
 // Middleware para entender cuerpos JSON en las peticiones
 app.use(express.json());
 
+// Rutas de Autenticación
+app.use('/api/auth', authRoutes);
+
 // Ruta básica de prueba
 app.get('/', (req: Request, res: Response) => {
   res.send('¡Hola! Servidor Express con TypeScript funcionando correctamente.');
 });
 
-// Arrancar el servidor
-app.listen(port, () => {
-  console.log(`[Servidor]: Ejecutándose en http://localhost:${port}`);
-});
+// Arrancar el servidor solo si se ejecuta directamente
+if (import.meta.url === `file://${process.argv[1]}`) {
+  app.listen(port, () => {
+    console.log(`[Servidor]: Ejecutándose en http://localhost:${port}`);
+  });
+}
+
+export default app;
