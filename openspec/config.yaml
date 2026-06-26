@@ -128,6 +128,10 @@ context: |
       - FORMULARIOS Y ACCESIBILIDAD: A la hora de desarrollar un formulario en el Frontend (Angular HTML),
         asegúrate siempre de poner los atributos 'id' en los <input> y los correspondientes 'for' en los <label>
         para cumplir con las reglas de accesibilidad y no generar errores de ESLint.
+      - SINTAXIS ANGULAR MODERNA: Usa siempre el nuevo control de flujo nativo de Angular (@if, @for, @switch)
+        en las plantillas HTML en lugar de las directivas antiguas (*ngIf, *ngFor, *ngSwitch).
+      - INYECCIÓN DE DEPENDENCIAS (ANGULAR): Usa siempre la función `inject()` para la inyección de 
+        dependencias en lugar de declararlas en el constructor (ej. `private http = inject(HttpClient);`).
       - ESTILOS Y COMPONENTES: El uso de variables globales (tipografías, colores),
         clases y estilos comunes (BEM/ITCSS) es COMPLETAMENTE OBLIGATORIO al crear o
         modificar interfaces. Siempre hay que reutilizar clases globales a no ser que

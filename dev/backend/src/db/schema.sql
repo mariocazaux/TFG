@@ -97,11 +97,16 @@ CREATE TABLE public.maintenance_logs (
 -- 3. ROUTES & EVENTS
 --------------------------------------------------------------------------------
 
+CREATE TYPE route_vehicle_category AS ENUM ('car', 'motorcycle', 'both');
+CREATE TYPE route_difficulty AS ENUM ('low', 'medium', 'high');
+
 CREATE TABLE public.routes (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     creator_id UUID REFERENCES public.profiles(id) ON DELETE CASCADE,
     title TEXT NOT NULL,
     description TEXT,
+    vehicle_category route_vehicle_category NOT NULL DEFAULT 'both',
+    difficulty route_difficulty NOT NULL DEFAULT 'medium',
     -- path_coords guardará la línea de la ruta
     path_coords GEOMETRY(LineString, 4326),
     distance_km FLOAT,
@@ -123,6 +128,7 @@ CREATE TABLE public.events (
     title TEXT NOT NULL,
     description TEXT,
     event_date TIMESTAMP WITH TIME ZONE NOT NULL,
+    max_attendees INT,
     -- location_coords guardará el punto de encuentro
     location_coords GEOMETRY(Point, 4326),
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()

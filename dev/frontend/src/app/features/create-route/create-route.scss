@@ -1,0 +1,92 @@
+.create-route-container {
+  display: flex;
+  height: 100vh;
+  width: 100%;
+
+  @media (width <= 768px) {
+    flex-direction: column;
+  }
+
+  .sidebar {
+    width: 350px;
+    background: var(--color-background-elevated, #fff);
+    box-shadow: 2px 0 5px rgb(0 0 0 / 10%);
+    padding: 1.5rem;
+    z-index: 10;
+    overflow-y: auto;
+
+    @media (width <= 768px) {
+      width: 100%;
+      height: 40vh;
+      box-shadow: 0 2px 5px rgb(0 0 0 / 10%);
+    }
+
+    h2 {
+      margin-top: 0;
+      font-size: 1.5rem;
+      color: var(--color-text, #333);
+    }
+
+    p {
+      color: var(--color-text-muted, #666);
+      font-size: 0.9rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .map-controls {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+
+      .btn {
+        flex: 1;
+        font-size: 0.8rem;
+        padding: 0.5rem;
+      }
+    }
+
+    .form-row {
+      display: flex;
+      gap: 1rem;
+
+      .form-group {
+        flex: 1;
+      }
+    }
+
+    .mt-2 {
+      margin-top: 1.5rem;
+    }
+
+    .w-100 {
+      width: 100%;
+    }
+
+    .error-msg {
+      color: var(--color-error, #dc3545);
+      font-size: 0.9rem;
+      margin-bottom: 1rem;
+    }
+
+    .success-msg {
+      color: var(--color-success, #28a745);
+      font-size: 0.9rem;
+      margin-bottom: 1rem;
+    }
+  }
+
+  .map-wrapper {
+    flex: 1;
+    height: 100%;
+
+    @media (width <= 768px) {
+      height: 60vh;
+    }
+  }
+}
+
+// Ocultar panel de instrucciones de routing machine
+/* stylelint-disable-next-line selector-pseudo-element-no-unknown */
+::ng-deep .leaflet-routing-container {
+  display: none !important;
+}

@@ -31,6 +31,12 @@ app.use('/api/auth', authRoutes);
 import vehicleRoutes from './routes/vehicle.routes.ts';
 app.use('/api/vehicles', vehicleRoutes);
 
+// Rutas de Mapas y Eventos
+import routesRoutes from './routes/routes.routes.ts';
+import eventsRoutes from './routes/events.routes.ts';
+app.use('/api/routes', routesRoutes);
+app.use('/api/events', eventsRoutes);
+
 // Ruta básica de prueba
 app.get('/', (req: Request, res: Response) => {
   res.send('¡Hola! Servidor Express con TypeScript funcionando correctamente.');

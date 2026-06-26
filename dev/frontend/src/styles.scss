@@ -29,3 +29,5 @@
 
 // 7. UTILITIES: Clases de utilidad y helpers específicos
 @forward 'styles/utilities/utilities.layout';
+@import 'leaflet/dist/leaflet.css';
+@import 'leaflet-routing-machine/dist/leaflet-routing-machine.css';
