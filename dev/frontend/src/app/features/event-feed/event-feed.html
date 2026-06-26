@@ -1,5 +1,8 @@
 <div class="event-feed-container">
-  <h2>Próximas Quedadas</h2>
+  <div class="feed-header">
+    <h2>Próximas Quedadas</h2>
+    <button class="btn btn-primary" routerLink="/app/create-event">Crear Quedada</button>
+  </div>
 
   @if (isLoading) {
     <div class="loading-state">
@@ -21,38 +24,7 @@
 
   <div class="events-grid">
     @for (event of events; track event.id) {
-      <div class="event-card">
-        <div class="card-header">
-          <h3>{{ event.title }}</h3>
-          <span class="date">{{ event.event_date | date: 'medium' }}</span>
-        </div>
-
-        <div class="card-body">
-          <p class="desc">{{ event.description }}</p>
-
-          <div class="organizer">
-            <span
-              >Organizado por: <strong>@{{ event.organizer?.username }}</strong></span
-            >
-          </div>
-
-          <div class="attendance">
-            <span class="badge" [ngClass]="{ 'badge-full': isFull(event) }">
-              Asistentes: {{ getAttendeesCount(event) }} / {{ event.max_attendees }}
-            </span>
-          </div>
-        </div>
-
-        <div class="card-footer">
-          <button
-            class="btn btn-primary w-100"
-            (click)="attendEvent(event)"
-            [disabled]="isFull(event)"
-          >
-            {{ isFull(event) ? 'Aforo Completo' : 'Asistir' }}
-          </button>
-        </div>
-      </div>
+      <app-event-card [event]="event" (attend)="attendEvent($event)"> </app-event-card>
     }
   </div>
 </div>

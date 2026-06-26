@@ -5,6 +5,7 @@ import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../../../environments/environment';
 import { Vehicle, BackendVehicle, VehicleType } from '../../../../core/models/domain.models';
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
+import { AuthService } from '../../../../core/services/auth.service';
 
 @Component({
   selector: 'app-add-vehicle',
@@ -19,8 +20,9 @@ export class AddVehicleComponent implements OnInit {
 
   vehicleToEdit = input<Vehicle | undefined>();
 
-  private fb = inject(FormBuilder);
-  private http = inject(HttpClient);
+  private readonly fb = inject(FormBuilder);
+  private readonly http = inject(HttpClient);
+  private readonly authService = inject(AuthService);
   private supabase: SupabaseClient;
 
   isSubmitting = signal(false);
@@ -128,7 +130,7 @@ export class AddVehicleComponent implements OnInit {
 
     try {
       if (this.selectedFile) {
-        const token = localStorage.getItem('kachaoo_auth_token');
+        const token = this.authService.getToken();
         if (token) {
           const authSupabase = createClient(environment.supabaseUrl, environment.supabaseKey, {
             global: {

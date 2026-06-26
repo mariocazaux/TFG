@@ -1,0 +1,17 @@
+<div class="form-group">
+  <label [for]="id()">{{ label() }}</label>
+  <input
+    [id]="id()"
+    [type]="type()"
+    [placeholder]="placeholder()"
+    [value]="value"
+    [disabled]="isDisabled"
+    (input)="onInput($event)"
+    (blur)="onTouch()"
+    class="form-control"
+    [ngClass]="{ 'is-invalid': !!error() }"
+  />
+  @if (error()) {
+    <div class="error-msg">{{ error() }}</div>
+  }
+</div>

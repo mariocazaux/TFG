@@ -1,0 +1,28 @@
+<div class="event-card">
+  <div class="card-header">
+    <h3>{{ event().title }}</h3>
+    <span class="date">{{ event().event_date | date: 'medium' }}</span>
+  </div>
+
+  <div class="card-body">
+    <p class="desc">{{ event().description }}</p>
+
+    <div class="organizer">
+      <span
+        >Organizado por: <strong>@{{ event().organizer?.username }}</strong></span
+      >
+    </div>
+
+    <div class="attendance">
+      <span class="badge" [ngClass]="{ 'badge-full': isFull() }">
+        Asistentes: {{ getAttendeesCount() }} / {{ event().max_attendees }}
+      </span>
+    </div>
+  </div>
+
+  <div class="card-footer">
+    <button class="btn btn-primary w-100" (click)="attend.emit(event())" [disabled]="isFull()">
+      {{ isFull() ? 'Aforo Completo' : 'Asistir' }}
+    </button>
+  </div>
+</div>

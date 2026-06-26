@@ -2,21 +2,25 @@ import { Component, OnInit, ElementRef, ViewChild, AfterViewInit, inject } from 
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
+import { AuthService } from '../../core/services/auth.service';
+import { FormInputComponent } from '../../shared/components/form-input/form-input';
+import { ButtonComponent } from '../../shared/components/button/button';
 import * as L from 'leaflet';
 import 'leaflet-routing-machine';
 
 @Component({
   selector: 'app-create-route',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, FormInputComponent, ButtonComponent],
   templateUrl: './create-route.html',
   styleUrls: ['./create-route.scss'],
 })
 export class CreateRouteComponent implements OnInit, AfterViewInit {
   @ViewChild('mapElement') mapElement!: ElementRef;
 
-  private fb = inject(FormBuilder);
-  private http = inject(HttpClient);
+  private readonly fb = inject(FormBuilder);
+  private readonly http = inject(HttpClient);
+  private readonly authService = inject(AuthService);
 
   routeForm!: FormGroup;
   private map!: L.Map;
@@ -117,7 +121,7 @@ export class CreateRouteComponent implements OnInit, AfterViewInit {
       distance_km: distance,
     };
 
-    const token = localStorage.getItem('supabase_token'); // o desde el auth service
+    const token = this.authService.getToken();
     const headers = {
       Authorization: `Bearer ${token}`,
     };

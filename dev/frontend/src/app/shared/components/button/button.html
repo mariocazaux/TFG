@@ -1,0 +1,15 @@
+<button
+  [type]="type()"
+  [disabled]="disabled()"
+  class="btn"
+  [ngClass]="{
+    'btn-primary': variant() === 'primary',
+    'btn-secondary': variant() === 'secondary',
+    'btn-danger': variant() === 'danger',
+    'w-100': fullWidth(),
+  }"
+  (click)="clicked.emit($event)"
+>
+  {{ label() }}
+  <ng-content></ng-content>
+</button>

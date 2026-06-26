@@ -1,3 +1,6 @@
+@use '../../../styles/settings/settings.colors' as colors;
+@use '../../../styles/tools/tools.mixins' as mixins;
+
 .create-event-container {
   display: flex;
   height: 100vh;
@@ -9,26 +12,33 @@
 
   .sidebar {
     width: 350px;
-    background: var(--color-background-elevated, #fff);
-    box-shadow: 2px 0 5px rgb(0 0 0 / 10%);
+
+    @include mixins.glassmorphism(0.1, 16px);
+
+    border-right: 1px solid rgb(255 255 255 / 5%);
     padding: 1.5rem;
     z-index: 10;
     overflow-y: auto;
+    color: #fff;
 
     @media (width <= 768px) {
       width: 100%;
       height: 45vh;
-      box-shadow: 0 2px 5px rgb(0 0 0 / 10%);
+      border-right: none;
+      border-bottom: 1px solid rgb(255 255 255 / 5%);
     }
 
     h2 {
       margin-top: 0;
       font-size: 1.5rem;
-      color: var(--color-text, #333);
+
+      @include mixins.gradient-text(colors.$color-cyan-400, colors.$color-purple-500);
+
+      font-weight: 700;
     }
 
     p {
-      color: var(--color-text-muted, #666);
+      color: rgb(255 255 255 / 60%);
       font-size: 0.9rem;
       margin-bottom: 1.5rem;
     }
@@ -37,27 +47,24 @@
       display: flex;
       gap: 1rem;
 
-      .form-group {
+      .form-group,
+      app-form-input {
         flex: 1;
       }
     }
 
-    .mt-2 {
-      margin-top: 1.5rem;
-    }
-
-    .w-100 {
-      width: 100%;
+    .map-controls {
+      margin-bottom: 1rem;
     }
 
     .error-msg {
-      color: var(--color-error, #dc3545);
+      color: colors.$color-pink-500;
       font-size: 0.9rem;
       margin-bottom: 1rem;
     }
 
     .success-msg {
-      color: var(--color-success, #28a745);
+      color: colors.$color-cyan-500;
       font-size: 0.9rem;
       margin-bottom: 1rem;
     }

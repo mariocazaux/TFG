@@ -1,27 +1,20 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
-
-interface EventData {
-  id: string;
-  title: string;
-  description: string;
-  event_date: string;
-  max_attendees: number;
-  attendees: { count: number }[];
-  organizer: { username: string; full_name: string; avatar_url: string };
-  location_coords: { coordinates: [number, number] };
-}
+import { RouterLink } from '@angular/router';
+import { AuthService } from '../../core/services/auth.service';
+import { EventCardComponent, EventData } from '../../shared/components/event-card/event-card';
 
 @Component({
   selector: 'app-event-feed',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, RouterLink, EventCardComponent],
   templateUrl: './event-feed.html',
   styleUrls: ['./event-feed.scss'],
 })
 export class EventFeedComponent implements OnInit {
   private http = inject(HttpClient);
+  private authService = inject(AuthService);
 
   events: EventData[] = [];
   isLoading = true;
@@ -61,7 +54,7 @@ export class EventFeedComponent implements OnInit {
       return;
     }
 
-    const token = localStorage.getItem('supabase_token');
+    const token = this.authService.getToken();
     const headers = { Authorization: `Bearer ${token}` };
 
     this.http

@@ -28,6 +28,26 @@ export const routes: Routes = [
           ),
       },
       {
+        path: 'map-explore',
+        loadComponent: () =>
+          import('./features/map-explore/map-explore').then((m) => m.MapExploreComponent),
+      },
+      {
+        path: 'create-route',
+        loadComponent: () =>
+          import('./features/create-route/create-route').then((m) => m.CreateRouteComponent),
+      },
+      {
+        path: 'event-feed',
+        loadComponent: () =>
+          import('./features/event-feed/event-feed').then((m) => m.EventFeedComponent),
+      },
+      {
+        path: 'create-event',
+        loadComponent: () =>
+          import('./features/create-event/create-event').then((m) => m.CreateEventComponent),
+      },
+      {
         path: '',
         redirectTo: 'profile',
         pathMatch: 'full',

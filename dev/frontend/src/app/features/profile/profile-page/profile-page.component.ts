@@ -99,7 +99,7 @@ export class ProfilePageComponent implements OnInit {
     const file = (event.target as HTMLInputElement).files?.[0];
     if (file) {
       try {
-        const token = localStorage.getItem('kachaoo_auth_token');
+        const token = this.authService.getToken();
         if (token) {
           const authSupabase = createClient(environment.supabaseUrl, environment.supabaseKey, {
             global: {

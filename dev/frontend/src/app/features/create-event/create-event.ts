@@ -2,20 +2,24 @@ import { Component, OnInit, ElementRef, ViewChild, AfterViewInit, inject } from 
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
+import { AuthService } from '../../core/services/auth.service';
+import { FormInputComponent } from '../../shared/components/form-input/form-input';
+import { ButtonComponent } from '../../shared/components/button/button';
 import * as L from 'leaflet';
 
 @Component({
   selector: 'app-create-event',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, FormInputComponent, ButtonComponent],
   templateUrl: './create-event.html',
   styleUrls: ['./create-event.scss'],
 })
 export class CreateEventComponent implements OnInit, AfterViewInit {
   @ViewChild('mapElement') mapElement!: ElementRef;
 
-  private fb = inject(FormBuilder);
-  private http = inject(HttpClient);
+  private readonly fb = inject(FormBuilder);
+  private readonly http = inject(HttpClient);
+  private readonly authService = inject(AuthService);
 
   eventForm!: FormGroup;
   private map!: L.Map;
@@ -95,7 +99,7 @@ export class CreateEventComponent implements OnInit, AfterViewInit {
       location: this.selectedLocation,
     };
 
-    const token = localStorage.getItem('supabase_token');
+    const token = this.authService.getToken();
     const headers = { Authorization: `Bearer ${token}` };
 
     this.http.post('http://localhost:3000/api/events', payload, { headers }).subscribe({

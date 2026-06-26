@@ -1,13 +1,16 @@
 import { Component, ElementRef, ViewChild, AfterViewInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { RouterLink } from '@angular/router';
 import * as L from 'leaflet';
 // Se usa import dinámico o workaround para leaflet-routing-machine si falla en SSR
+// ya que Leaflet manipula el DOM global.
+// Para este entorno local, asumimos que se carga sin problema en el cliente.
 import 'leaflet-routing-machine';
 
 @Component({
   selector: 'app-map-explore',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, RouterLink],
   templateUrl: './map-explore.html',
   styleUrls: ['./map-explore.scss'],
 })

@@ -1,18 +1,60 @@
+@use '../../../styles/settings/settings.colors' as colors;
+@use '../../../styles/tools/tools.mixins' as mixins;
+
 .map-explore-container {
-  display: flex;
-  flex-direction: column;
-  height: 100vh;
+  position: relative;
   width: 100%;
 
-  .map-header {
-    padding: 1rem;
-    background: var(--color-background-elevated, #fff);
-    box-shadow: 0 2px 4px rgb(0 0 0 / 10%);
-    z-index: 10;
-  }
+  // limit height to viewport minus sidebar/nav height, but in this case let's say 100% of parent
+  height: 100%;
+  min-height: 80vh;
+  overflow: hidden;
+  border-radius: 12px;
 
   .map-wrapper {
-    flex: 1;
-    min-height: 400px;
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+  }
+
+  .map-overlay-ui {
+    position: absolute;
+    inset: 0;
+    z-index: 10;
+    pointer-events: none; // so we can drag the map
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+
+    // the children must capture pointer events
+    > * {
+      pointer-events: auto;
+    }
+
+    .floating-header {
+      @include mixins.glassmorphism(0.2, 16px);
+
+      border-radius: 12px;
+      padding: 1rem 1.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      max-width: 600px;
+      margin: 0 auto;
+      width: 100%;
+
+      h2 {
+        margin: 0;
+        color: #fff;
+        font-size: 1.25rem;
+        font-weight: 600;
+
+        @include mixins.gradient-text(colors.$color-cyan-400, colors.$color-blue-500);
+      }
+
+      .btn {
+        @include mixins.glow-cyan(false);
+      }
+    }
   }
 }

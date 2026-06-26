@@ -1,0 +1,38 @@
+@use '../settings/settings.colors' as colors;
+
+// -----------------------------------------------------------------------------
+// TOOLS / MIXINS
+// -----------------------------------------------------------------------------
+
+@mixin glassmorphism($opacity: 0.1, $blur: 12px) {
+  background: rgba(colors.$color-background, $opacity);
+  backdrop-filter: blur($blur);
+  border: 1px solid rgb(255 255 255 / 5%);
+}
+
+@mixin glow-cyan($strong: false) {
+  @if $strong {
+    box-shadow: 0 0 20px colors.$color-glow-cyan-strong;
+  } @else {
+    box-shadow: 0 0 10px colors.$color-glow-cyan;
+  }
+}
+
+@mixin glow-purple($strong: false) {
+  @if $strong {
+    box-shadow: 0 0 20px colors.$color-glow-purple;
+  } @else {
+    box-shadow: 0 0 10px colors.$color-glow-purple-light;
+  }
+}
+
+@mixin gradient-text($start-color, $end-color) {
+  background: linear-gradient(90deg, $start-color, $end-color);
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  color: transparent; // fallback
+}
+
+@mixin gradient-bg($start-color, $end-color) {
+  background: linear-gradient(135deg, $start-color, $end-color);
+}
