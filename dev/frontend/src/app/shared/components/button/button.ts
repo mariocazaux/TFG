@@ -9,7 +9,6 @@ import { CommonModule } from '@angular/common';
   styleUrls: ['./button.scss'],
 })
 export class ButtonComponent {
-  label = input.required<string>();
   variant = input<'primary' | 'secondary' | 'danger'>('primary');
   disabled = input<boolean>(false);
   type = input<'button' | 'submit' | 'reset'>('button');

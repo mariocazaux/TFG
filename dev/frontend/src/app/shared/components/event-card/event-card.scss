@@ -1,5 +1,5 @@
-@use '../../../../../styles/settings/settings.colors' as colors;
-@use '../../../../../styles/tools/tools.mixins' as mixins;
+@use '../../../../styles/settings/settings.colors' as colors;
+@use '../../../../styles/tools/tools.mixins' as mixins;
 
 .event-card {
   @include mixins.glassmorphism(0.15, 16px);
