@@ -1,5 +1,5 @@
 <div class="form-group">
-  <label [for]="id()">{{ label() }}</label>
+  <label [for]="id()" class="form-group__label">{{ label() }}</label>
   <input
     [id]="id()"
     [type]="type()"
@@ -8,8 +8,8 @@
     [disabled]="isDisabled"
     (input)="onInput($event)"
     (blur)="onTouch()"
-    class="form-control"
-    [ngClass]="{ 'is-invalid': !!error() }"
+    class="form-group__input"
+    [ngClass]="{ 'form-group__input--error': !!error() }"
   />
   @if (error()) {
     <div class="error-msg">{{ error() }}</div>

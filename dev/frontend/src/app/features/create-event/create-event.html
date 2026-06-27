@@ -20,8 +20,13 @@
       </app-form-input>
 
       <div class="form-group">
-        <label for="description">Descripción</label>
-        <textarea id="description" formControlName="description" rows="3"></textarea>
+        <label for="description" class="form-group__label">Descripción</label>
+        <textarea
+          id="description"
+          formControlName="description"
+          rows="3"
+          class="form-group__input"
+        ></textarea>
       </div>
 
       <div class="form-row">
@@ -49,7 +54,7 @@
         <div class="success-msg">{{ successMessage }}</div>
       }
 
-      <div class="mt-2">
+      <div class="submit-wrapper">
         <app-button
           type="submit"
           variant="primary"

@@ -1,11 +1,19 @@
-import { Component, OnInit, ElementRef, ViewChild, AfterViewInit, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import {
+  Component,
+  OnInit,
+  ElementRef,
+  ViewChild,
+  AfterViewInit,
+  inject,
+  PLATFORM_ID,
+} from '@angular/core';
+import { isPlatformBrowser, CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { AuthService } from '../../core/services/auth.service';
 import { FormInputComponent } from '../../shared/components/form-input/form-input';
 import { ButtonComponent } from '../../shared/components/button/button';
-import * as L from 'leaflet';
+import type * as L from 'leaflet';
 
 @Component({
   selector: 'app-create-event',
@@ -39,11 +47,17 @@ export class CreateEventComponent implements OnInit, AfterViewInit {
     });
   }
 
-  ngAfterViewInit() {
-    this.initMap();
+  private platformId = inject(PLATFORM_ID);
+
+  async ngAfterViewInit() {
+    if (isPlatformBrowser(this.platformId)) {
+      const L = await import('leaflet');
+      this.initMap(L);
+    }
   }
 
-  private initMap(): void {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  private initMap(L: any): void {
     this.map = L.map(this.mapElement.nativeElement).setView([40.4168, -3.7038], 6);
 
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -69,14 +83,34 @@ export class CreateEventComponent implements OnInit, AfterViewInit {
       this.currentMarker = L.marker(e.latlng).addTo(this.map);
       this.selectedLocation = [e.latlng.lng, e.latlng.lat];
     });
+
+    // Fix map rendering issue on init
+    setTimeout(() => {
+      if (this.map) {
+        this.map.invalidateSize();
+      }
+    }, 100);
   }
 
   clearPin() {
-    if (this.currentMarker) {
+    if (this.currentMarker && this.map) {
       this.map.removeLayer(this.currentMarker);
       this.currentMarker = null;
       this.selectedLocation = null;
     }
+  }
+
+  private async setMarker(lat: number, lng: number) {
+    if (!this.map) {
+      return;
+    }
+    const L = await import('leaflet');
+
+    if (this.currentMarker) {
+      this.map.removeLayer(this.currentMarker);
+    }
+    this.currentMarker = L.marker([lat, lng]).addTo(this.map);
+    this.selectedLocation = [lng, lat];
   }
 
   onSubmit() {

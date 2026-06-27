@@ -1,3 +1,6 @@
+@use '../../../styles/settings/settings.colors' as colors;
+@use '../../../styles/tools/tools.mixins' as mixins;
+
 .event-feed-container {
   padding: 2rem;
   max-width: 1200px;
@@ -11,22 +14,54 @@
 
     h2 {
       margin-bottom: 0;
-      color: var(--color-text);
+
+      @include mixins.gradient-text(colors.$color-cyan-400, colors.$color-purple-500);
+
+      font-weight: 700;
     }
   }
 
-  .loading-state,
-  .empty-state,
-  .error-msg {
+  .empty-state {
+    @include mixins.glassmorphism(0.05, 12px);
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1.5rem;
+    padding: 6rem 2rem;
+    margin-top: 4rem;
+    color: colors.$color-text-primary;
+    border: 2px dashed rgb(255 255 255 / 10%);
+    border-radius: 16px;
     text-align: center;
-    padding: 3rem;
-    background: var(--color-background-elevated);
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgb(0 0 0 / 5%);
+
+    svg {
+      color: colors.$color-cyan-400;
+      opacity: 0.9;
+      margin-bottom: 1rem;
+    }
+
+    p {
+      margin: 0;
+      font-size: 1.5rem;
+      font-weight: 600;
+
+      @include mixins.gradient-text(colors.$color-cyan-400, colors.$color-blue-500);
+    }
   }
 
   .error-msg {
-    color: var(--color-error);
+    text-align: center;
+    padding: 3rem;
+    background: rgb(3 7 18 / 50%);
+    border-radius: 8px;
+    border: 1px solid colors.$color-pink-500;
+    box-shadow: 0 0 15px rgb(236 72 153 / 20%);
+  }
+
+  .error-msg {
+    color: colors.$color-pink-500;
   }
 
   .events-grid {

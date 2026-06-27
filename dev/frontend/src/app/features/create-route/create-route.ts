@@ -1,12 +1,19 @@
-import { Component, OnInit, ElementRef, ViewChild, AfterViewInit, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import {
+  Component,
+  OnInit,
+  ElementRef,
+  ViewChild,
+  AfterViewInit,
+  inject,
+  PLATFORM_ID,
+} from '@angular/core';
+import { isPlatformBrowser, CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { AuthService } from '../../core/services/auth.service';
 import { FormInputComponent } from '../../shared/components/form-input/form-input';
 import { ButtonComponent } from '../../shared/components/button/button';
-import * as L from 'leaflet';
-import 'leaflet-routing-machine';
+import type * as L from 'leaflet';
 
 @Component({
   selector: 'app-create-route',
@@ -40,11 +47,18 @@ export class CreateRouteComponent implements OnInit, AfterViewInit {
     });
   }
 
-  ngAfterViewInit() {
-    this.initMap();
+  private platformId = inject(PLATFORM_ID);
+
+  async ngAfterViewInit() {
+    if (isPlatformBrowser(this.platformId)) {
+      const L = await import('leaflet');
+      await import('leaflet-routing-machine');
+      this.initMap(L);
+    }
   }
 
-  private initMap(): void {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  private initMap(L: any): void {
     this.map = L.map(this.mapElement.nativeElement).setView([40.4168, -3.7038], 6);
 
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -65,6 +79,13 @@ export class CreateRouteComponent implements OnInit, AfterViewInit {
       this.waypoints.push(e.latlng);
       this.routingControl.setWaypoints(this.waypoints);
     });
+
+    // Fix map rendering issue on init
+    setTimeout(() => {
+      if (this.map) {
+        this.map.invalidateSize();
+      }
+    }, 100);
   }
 
   undoLastPoint() {

@@ -34,6 +34,7 @@
     .floating-header {
       @include mixins.glassmorphism(0.2, 16px);
 
+      background: colors.$color-background;
       border-radius: 12px;
       padding: 1rem 1.5rem;
       display: flex;

@@ -1,28 +1,38 @@
-import { Component, ElementRef, ViewChild, AfterViewInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { isPlatformBrowser, CommonModule } from '@angular/common';
+import {
+  Component,
+  ElementRef,
+  ViewChild,
+  AfterViewInit,
+  inject,
+  PLATFORM_ID,
+} from '@angular/core';
 import { RouterLink } from '@angular/router';
-import * as L from 'leaflet';
-// Se usa import dinámico o workaround para leaflet-routing-machine si falla en SSR
-// ya que Leaflet manipula el DOM global.
-// Para este entorno local, asumimos que se carga sin problema en el cliente.
-import 'leaflet-routing-machine';
+import { ButtonComponent } from '../../shared/components/button/button';
+import type * as L from 'leaflet';
 
 @Component({
   selector: 'app-map-explore',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, ButtonComponent],
   templateUrl: './map-explore.html',
   styleUrls: ['./map-explore.scss'],
 })
 export class MapExploreComponent implements AfterViewInit {
   @ViewChild('mapElement') mapElement!: ElementRef;
   private map!: L.Map;
+  private platformId = inject(PLATFORM_ID);
 
-  ngAfterViewInit() {
-    this.initMap();
+  async ngAfterViewInit() {
+    if (isPlatformBrowser(this.platformId)) {
+      const L = await import('leaflet');
+      await import('leaflet-routing-machine');
+      this.initMap(L);
+    }
   }
 
-  private initMap(): void {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  private initMap(L: any): void {
     // Configuración inicial del mapa de Leaflet
     this.map = L.map(this.mapElement.nativeElement).setView([40.4168, -3.7038], 6); // Madrid por defecto
 
@@ -46,5 +56,12 @@ export class MapExploreComponent implements AfterViewInit {
       shadowSize: [41, 41],
     });
     L.Marker.prototype.options.icon = iconDefault;
+
+    // Fix map rendering issue on init
+    setTimeout(() => {
+      if (this.map) {
+        this.map.invalidateSize();
+      }
+    }, 100);
   }
 }

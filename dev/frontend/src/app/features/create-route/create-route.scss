@@ -43,6 +43,12 @@
       margin-bottom: 1.5rem;
     }
 
+    .kachaoo-form {
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+
     .form-row {
       display: flex;
       gap: 1rem;
@@ -70,6 +76,14 @@
       color: colors.$color-cyan-500;
       font-size: 0.9rem;
       margin-bottom: 1rem;
+    }
+
+    .submit-wrapper {
+      margin-top: 0.5rem;
+
+      @media (width >= 768px) {
+        margin-top: 1.5rem;
+      }
     }
   }
 

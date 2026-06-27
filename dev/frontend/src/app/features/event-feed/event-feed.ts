@@ -4,11 +4,13 @@ import { HttpClient } from '@angular/common/http';
 import { RouterLink } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
 import { EventCardComponent, EventData } from '../../shared/components/event-card/event-card';
+import { ButtonComponent } from '../../shared/components/button/button';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-event-feed',
   standalone: true,
-  imports: [CommonModule, RouterLink, EventCardComponent],
+  imports: [CommonModule, RouterLink, EventCardComponent, ButtonComponent],
   templateUrl: './event-feed.html',
   styleUrls: ['./event-feed.scss'],
 })
@@ -17,7 +19,6 @@ export class EventFeedComponent implements OnInit {
   private authService = inject(AuthService);
 
   events: EventData[] = [];
-  isLoading = true;
   errorMessage = '';
 
   ngOnInit() {
@@ -25,14 +26,12 @@ export class EventFeedComponent implements OnInit {
   }
 
   loadEvents() {
-    this.http.get<EventData[]>('http://localhost:3000/api/events').subscribe({
+    this.http.get<EventData[]>(`${environment.apiUrl}/events`).subscribe({
       next: (data) => {
         this.events = data;
-        this.isLoading = false;
       },
       error: () => {
         this.errorMessage = 'Error al cargar los eventos próximos.';
-        this.isLoading = false;
       },
     });
   }

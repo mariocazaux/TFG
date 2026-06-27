@@ -1,12 +1,12 @@
 <button
   [type]="type()"
   [disabled]="disabled()"
-  class="btn"
+  class="button"
   [ngClass]="{
-    'btn-primary': variant() === 'primary',
-    'btn-secondary': variant() === 'secondary',
-    'btn-danger': variant() === 'danger',
-    'w-100': fullWidth(),
+    'button--cyan': variant() === 'primary',
+    'button--secondary': variant() === 'secondary',
+    'button--danger': variant() === 'danger',
+    'u-w-full': fullWidth(),
   }"
   (click)="clicked.emit($event)"
 >

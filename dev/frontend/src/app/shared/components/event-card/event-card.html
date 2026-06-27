@@ -21,8 +21,13 @@
   </div>
 
   <div class="card-footer">
-    <button class="btn btn-primary w-100" (click)="attend.emit(event())" [disabled]="isFull()">
+    <app-button
+      variant="primary"
+      [fullWidth]="true"
+      [disabled]="isFull()"
+      (clicked)="attend.emit(event())"
+    >
       {{ isFull() ? 'Aforo Completo' : 'Asistir' }}
-    </button>
+    </app-button>
   </div>
 </div>

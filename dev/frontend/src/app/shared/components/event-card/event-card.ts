@@ -1,5 +1,6 @@
 import { Component, input, output } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { ButtonComponent } from '../button/button';
 
 export interface EventData {
   id: string;
@@ -15,7 +16,7 @@ export interface EventData {
 @Component({
   selector: 'app-event-card',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, ButtonComponent],
   templateUrl: './event-card.html',
   styleUrls: ['./event-card.scss'],
 })

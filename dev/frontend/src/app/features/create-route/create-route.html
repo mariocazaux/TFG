@@ -18,14 +18,23 @@
       </app-form-input>
 
       <div class="form-group">
-        <label for="description">Descripción (Opcional)</label>
-        <textarea id="description" formControlName="description" rows="3"></textarea>
+        <label for="description" class="form-group__label">Descripción (Opcional)</label>
+        <textarea
+          id="description"
+          formControlName="description"
+          rows="3"
+          class="form-group__input"
+        ></textarea>
       </div>
 
       <div class="form-row">
         <div class="form-group">
-          <label for="vehicle_category">Vehículo</label>
-          <select id="vehicle_category" formControlName="vehicle_category">
+          <label for="vehicle_category" class="form-group__label">Vehículo</label>
+          <select
+            id="vehicle_category"
+            formControlName="vehicle_category"
+            class="form-group__select"
+          >
             <option value="both">Ambos</option>
             <option value="car">Coche</option>
             <option value="motorcycle">Moto</option>
@@ -33,8 +42,8 @@
         </div>
 
         <div class="form-group">
-          <label for="difficulty">Dificultad</label>
-          <select id="difficulty" formControlName="difficulty">
+          <label for="difficulty" class="form-group__label">Dificultad</label>
+          <select id="difficulty" formControlName="difficulty" class="form-group__select">
             <option value="low">Baja</option>
             <option value="medium">Media</option>
             <option value="high">Alta</option>
@@ -49,7 +58,7 @@
         <div class="success-msg">{{ successMessage }}</div>
       }
 
-      <div class="mt-2">
+      <div class="submit-wrapper">
         <app-button
           type="submit"
           variant="primary"

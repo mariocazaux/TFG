@@ -72,7 +72,7 @@ export const getAllEvents = async (req: Request, res: Response) => {
       .select(
         `
         *,
-        organizer:profiles(username, avatar_url, full_name),
+        organizer:profiles!events_organizer_id_fkey(username, avatar_url, full_name),
         attendees:event_attendees(count)
       `,
       )
