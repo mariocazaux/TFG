@@ -7,6 +7,9 @@ import { CommonModule } from '@angular/common';
   imports: [CommonModule],
   templateUrl: './button.html',
   styleUrls: ['./button.scss'],
+  host: {
+    '[class.w-full]': 'fullWidth()',
+  },
 })
 export class ButtonComponent {
   variant = input<'primary' | 'secondary' | 'danger'>('primary');

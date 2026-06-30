@@ -20,20 +20,20 @@
     </button>
   </div>
 
-  @if (errorMessage) {
+  @if (errorMessage()) {
     <div class="error-msg">
-      {{ errorMessage }}
+      {{ errorMessage() }}
     </div>
   }
 
   @if (activeTab() === 'events') {
-    @if (!events || events.length === 0) {
+    @if (!events() || events().length === 0) {
       <div class="empty-state">
         <p>No hay quedadas próximas en este momento.</p>
       </div>
     } @else {
       <div class="events-grid">
-        @for (event of events; track event.id) {
+        @for (event of events(); track event.id) {
           <app-event-card
             [event]="event"
             [currentUserId]="currentUserId"
@@ -48,13 +48,13 @@
   }
 
   @if (activeTab() === 'routes') {
-    @if (!routes || routes.length === 0) {
+    @if (!routes() || routes().length === 0) {
       <div class="empty-state">
         <p>No hay rutas compartidas todavía.</p>
       </div>
     } @else {
       <div class="events-grid">
-        @for (route of routes; track route.id) {
+        @for (route of routes(); track route.id) {
           <app-route-card
             [routeData]="route"
             [currentUserId]="currentUserId"

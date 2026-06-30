@@ -34,10 +34,17 @@ export class EventCardComponent {
   }
 
   isFull(): boolean {
+    if (!this.event().max_attendees) {
+      return false;
+    }
     return this.getAttendeesCount() >= this.event().max_attendees;
   }
 
   canEditOrDelete(): boolean {
     return this.currentUserId() === this.event().organizer_id;
+  }
+
+  getPlaceholderImage(): string {
+    return 'https://picsum.photos/seed/event/400/200';
   }
 }

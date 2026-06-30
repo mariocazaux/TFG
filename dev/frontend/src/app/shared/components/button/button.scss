@@ -1,4 +1,9 @@
 // Button component styles
 :host {
   display: inline-block;
+
+  &.w-full {
+    display: block;
+    width: 100%;
+  }
 }

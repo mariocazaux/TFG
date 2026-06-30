@@ -32,4 +32,14 @@ export class RouteCardComponent {
   canEditOrDelete(): boolean {
     return this.currentUserId() === this.routeData().creator_id;
   }
+
+  getPlaceholderImage(): string {
+    const category = this.routeData().vehicle_category?.toLowerCase();
+    if (category === 'motorcycle') {
+      return 'https://picsum.photos/seed/motorcycle/400/200';
+    } else if (category === 'car') {
+      return 'https://picsum.photos/seed/car/400/200';
+    }
+    return 'https://picsum.photos/seed/route/400/200';
+  }
 }

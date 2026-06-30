@@ -1,4 +1,5 @@
 <div class="route-card">
+  <img [src]="getPlaceholderImage()" alt="Route Image" class="card-image" />
   <div class="card-header">
     <h3>{{ routeData().title }}</h3>
     <span class="difficulty" [ngClass]="routeData().difficulty">{{ routeData().difficulty }}</span>
@@ -21,10 +22,10 @@
 
   @if (canEditOrDelete()) {
     <div class="card-footer">
-      <app-button variant="secondary" [fullWidth]="false" (clicked)="edit.emit(routeData())">
+      <app-button variant="secondary" [fullWidth]="true" (clicked)="edit.emit(routeData())">
         Editar
       </app-button>
-      <app-button variant="danger" [fullWidth]="false" (clicked)="delete.emit(routeData())">
+      <app-button variant="danger" [fullWidth]="true" (clicked)="delete.emit(routeData())">
         Eliminar
       </app-button>
     </div>

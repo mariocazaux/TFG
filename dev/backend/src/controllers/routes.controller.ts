@@ -76,7 +76,7 @@ export const getAllRoutes = async (req: Request, res: Response) => {
       .select(
         `
         *,
-        creator:profiles(username, avatar_url, full_name)
+        creator:profiles!routes_creator_id_fkey(username, avatar_url, full_name)
       `,
       )
       .order('created_at', { ascending: false });
@@ -100,7 +100,7 @@ export const getRouteById = async (req: Request, res: Response) => {
 
     const { data, error } = await supabase
       .from('routes')
-      .select(`*, creator:profiles(username, avatar_url, full_name)`)
+      .select(`*, creator:profiles!routes_creator_id_fkey(username, avatar_url, full_name)`)
       .eq('id', routeId)
       .single();
 

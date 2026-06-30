@@ -30,10 +30,10 @@ export class EventFeedComponent implements OnInit {
 
   activeTab = signal<'events' | 'routes'>('events');
 
-  events: EventData[] = [];
-  routes: RouteData[] = [];
+  events = signal<EventData[]>([]);
+  routes = signal<RouteData[]>([]);
 
-  errorMessage = '';
+  errorMessage = signal<string>('');
   currentUserId: string | null = null;
 
   // Deletion state
@@ -50,23 +50,23 @@ export class EventFeedComponent implements OnInit {
   }
 
   loadEvents() {
-    this.http.get<EventData[]>(`${environment.apiUrl}/events`).subscribe({
+    this.http.get<EventData[]>(`${environment.apiUrl}/events?_t=${Date.now()}`).subscribe({
       next: (data) => {
-        this.events = data;
+        this.events.set(data);
       },
       error: () => {
-        this.errorMessage = 'Error al cargar los eventos próximos.';
+        this.errorMessage.set('Error al cargar los eventos próximos.');
       },
     });
   }
 
   loadRoutes() {
-    this.http.get<RouteData[]>(`${environment.apiUrl}/routes`).subscribe({
+    this.http.get<RouteData[]>(`${environment.apiUrl}/routes?_t=${Date.now()}`).subscribe({
       next: (data) => {
-        this.routes = data;
+        this.routes.set(data);
       },
       error: () => {
-        this.errorMessage = 'Error al cargar las rutas.';
+        this.errorMessage.set('Error al cargar las rutas.');
       },
     });
   }

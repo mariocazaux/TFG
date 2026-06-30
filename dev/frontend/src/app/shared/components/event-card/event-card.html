@@ -1,4 +1,5 @@
 <div class="event-card">
+  <img [src]="getPlaceholderImage()" alt="Event Image" class="card-image" />
   <div class="card-header">
     <h3>{{ event().title }}</h3>
     <span class="date">{{ event().event_date | date: 'medium' }}</span>
@@ -23,10 +24,10 @@
   <div class="card-footer">
     @if (canEditOrDelete()) {
       <div class="footer-actions">
-        <app-button variant="secondary" [fullWidth]="false" (clicked)="edit.emit(event())">
+        <app-button variant="secondary" [fullWidth]="true" (clicked)="edit.emit(event())">
           Editar
         </app-button>
-        <app-button variant="danger" [fullWidth]="false" (clicked)="delete.emit(event())">
+        <app-button variant="danger" [fullWidth]="true" (clicked)="delete.emit(event())">
           Eliminar
         </app-button>
       </div>
