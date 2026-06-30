@@ -57,5 +57,73 @@
         @include mixins.glow-cyan(false);
       }
     }
+
+    .suggestion-panel {
+      @include mixins.glassmorphism(0.2, 16px);
+
+      margin: auto auto 1rem;
+      max-width: 500px;
+      width: 100%;
+      background: rgb(3 7 18 / 85%);
+      border: 1px solid rgba(colors.$color-cyan-500, 0.3);
+      border-radius: 12px;
+      padding: 1.5rem;
+      position: relative;
+      box-shadow: 0 4px 20px rgba(colors.$color-cyan-500, 0.15);
+
+      .suggestion-badge {
+        position: absolute;
+        top: -12px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: colors.$color-cyan-500;
+        color: #fff;
+        padding: 0.25rem 1rem;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: 700;
+        letter-spacing: 0.5px;
+        text-transform: uppercase;
+        box-shadow: 0 0 10px rgba(colors.$color-cyan-500, 0.5);
+      }
+
+      .suggestion-content {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 1rem;
+
+        .info {
+          h3 {
+            margin: 0 0 0.5rem;
+            font-size: 1.1rem;
+            color: #fff;
+          }
+
+          p {
+            margin: 0;
+            font-size: 0.85rem;
+            color: rgb(255 255 255 / 70%);
+
+            span {
+              font-weight: bold;
+              text-transform: uppercase;
+
+              &.easy {
+                color: colors.$color-cyan-400;
+              }
+
+              &.medium {
+                color: #ffb74d;
+              }
+
+              &.hard {
+                color: colors.$color-pink-500;
+              }
+            }
+          }
+        }
+      }
+    }
   }
 }

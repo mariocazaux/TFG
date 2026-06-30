@@ -83,6 +83,29 @@ export class AuthService {
     }
   }
 
+  getUserId(): string | null {
+    const token = this.getToken();
+    if (!token) {
+      return null;
+    }
+    try {
+      const payloadBase64Url = token.split('.')[1];
+      const payloadBase64 = payloadBase64Url.replace(/-/g, '+').replace(/_/g, '/');
+      const payloadJson = decodeURIComponent(
+        atob(payloadBase64)
+          .split('')
+          .map(function (c) {
+            return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+          })
+          .join(''),
+      );
+      const payload = JSON.parse(payloadJson);
+      return payload.sub || null;
+    } catch {
+      return null;
+    }
+  }
+
   logout(): void {
     if (typeof window !== 'undefined' && window.localStorage) {
       localStorage.removeItem('kachaoo_auth_token');

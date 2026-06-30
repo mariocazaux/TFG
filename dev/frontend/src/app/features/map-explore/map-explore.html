@@ -9,6 +9,25 @@
       </div>
     </div>
 
-    <!-- Here we will add the floating search or cards later if needed -->
+    <!-- Floating suggestion -->
+    @if (suggestedRoute()) {
+      <div class="suggestion-panel">
+        <span class="suggestion-badge">Sugerencia para ti</span>
+        <div class="suggestion-content">
+          <div class="info">
+            <h3>{{ suggestedRoute()?.title }}</h3>
+            <p>
+              Distancia: {{ suggestedRoute()?.distance_km | number: '1.1-2' }} km &bull; Dificultad:
+              <span [ngClass]="suggestedRoute()?.difficulty">{{
+                suggestedRoute()?.difficulty
+              }}</span>
+            </p>
+          </div>
+          <app-button variant="secondary" [fullWidth]="false" routerLink="/app/events"
+            >Ver Más</app-button
+          >
+        </div>
+      </div>
+    }
   </div>
 </div>

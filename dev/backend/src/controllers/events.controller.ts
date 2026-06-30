@@ -146,7 +146,131 @@ export const attendEvent = async (req: Request, res: Response) => {
         .json({ error: 'Error guardando tu asistencia', details: insertError.message });
     }
 
-    return res.status(200).json({ message: 'Asistencia registrada correctamente' });
+    return res.status(200).json({ message: 'Asistencia registrada con éxito' });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: 'Error del servidor' });
+  }
+};
+
+export const getEventById = async (req: Request, res: Response) => {
+  try {
+    const supabase = createClient(supabaseUrl, supabaseKey);
+    const eventId = req.params.id;
+
+    const { data, error } = await supabase
+      .from('events')
+      .select(
+        `
+        *,
+        organizer:profiles!events_organizer_id_fkey(username, avatar_url, full_name),
+        attendees:event_attendees(count)
+      `,
+      )
+      .eq('id', eventId)
+      .single();
+
+    if (error) {
+      return res.status(404).json({ error: 'Evento no encontrado' });
+    }
+
+    return res.status(200).json(data);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: 'Error del servidor' });
+  }
+};
+
+export const updateEvent = async (req: Request, res: Response) => {
+  try {
+    const authHeader = req.headers.authorization;
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return res.status(401).json({ error: 'Falta el token de autorización' });
+    }
+    const token = authHeader.split(' ')[1];
+
+    const userSupabase = createClient(supabaseUrl, supabaseKey, {
+      global: { headers: { Authorization: `Bearer ${token}` } },
+    });
+
+    const { data: userData, error: userError } = await userSupabase.auth.getUser();
+    if (userError || !userData.user) {
+      return res.status(401).json({ error: 'Token inválido' });
+    }
+
+    const eventId = req.params.id;
+    const { title, description, event_date, max_attendees, location } = req.body;
+
+    if (!title || !event_date || !location || !Array.isArray(location)) {
+      return res.status(400).json({ error: 'Faltan campos obligatorios o ubicación inválida' });
+    }
+
+    const geojson = {
+      type: 'Point',
+      coordinates: location,
+    };
+
+    const { data, error } = await userSupabase
+      .from('events')
+      .update({
+        title,
+        description,
+        event_date,
+        max_attendees,
+        location_coords: geojson,
+      })
+      .eq('id', eventId)
+      .eq('organizer_id', userData.user.id) // Only allow update if user is the organizer
+      .select()
+      .single();
+
+    if (error) {
+      console.error('Error actualizando evento:', error);
+      return res
+        .status(500)
+        .json({ error: 'Error interno actualizando el evento o no tienes permisos' });
+    }
+
+    return res.status(200).json(data);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: 'Error del servidor' });
+  }
+};
+
+export const deleteEvent = async (req: Request, res: Response) => {
+  try {
+    const authHeader = req.headers.authorization;
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return res.status(401).json({ error: 'Falta el token de autorización' });
+    }
+    const token = authHeader.split(' ')[1];
+
+    const userSupabase = createClient(supabaseUrl, supabaseKey, {
+      global: { headers: { Authorization: `Bearer ${token}` } },
+    });
+
+    const { data: userData, error: userError } = await userSupabase.auth.getUser();
+    if (userError || !userData.user) {
+      return res.status(401).json({ error: 'Token inválido' });
+    }
+
+    const eventId = req.params.id;
+
+    const { error } = await userSupabase
+      .from('events')
+      .delete()
+      .eq('id', eventId)
+      .eq('organizer_id', userData.user.id);
+
+    if (error) {
+      console.error('Error borrando evento:', error);
+      return res
+        .status(500)
+        .json({ error: 'Error interno borrando el evento o no tienes permisos' });
+    }
+
+    return res.status(200).json({ message: 'Evento eliminado con éxito' });
   } catch (error) {
     console.error(error);
     return res.status(500).json({ error: 'Error del servidor' });

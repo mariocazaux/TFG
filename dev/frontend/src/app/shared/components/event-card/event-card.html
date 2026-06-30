@@ -9,7 +9,7 @@
 
     <div class="organizer">
       <span
-        >Organizado por: <strong>@{{ event().organizer.username }}</strong></span
+        >Organizado por: <strong>&#64;{{ event().organizer.username }}</strong></span
       >
     </div>
 
@@ -21,6 +21,16 @@
   </div>
 
   <div class="card-footer">
+    @if (canEditOrDelete()) {
+      <div class="footer-actions">
+        <app-button variant="secondary" [fullWidth]="false" (clicked)="edit.emit(event())">
+          Editar
+        </app-button>
+        <app-button variant="danger" [fullWidth]="false" (clicked)="delete.emit(event())">
+          Eliminar
+        </app-button>
+      </div>
+    }
     <app-button
       variant="primary"
       [fullWidth]="true"

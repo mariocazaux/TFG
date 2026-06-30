@@ -4,11 +4,16 @@ import {
   ElementRef,
   ViewChild,
   AfterViewInit,
+  OnInit,
   inject,
   PLATFORM_ID,
+  signal,
 } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { HttpClient } from '@angular/common/http';
 import { ButtonComponent } from '../../shared/components/button/button';
+import { RouteData } from '../../shared/components/route-card/route-card';
+import { environment } from '../../../environments/environment';
 import type * as L from 'leaflet';
 
 @Component({
@@ -18,10 +23,25 @@ import type * as L from 'leaflet';
   templateUrl: './map-explore.html',
   styleUrls: ['./map-explore.scss'],
 })
-export class MapExploreComponent implements AfterViewInit {
+export class MapExploreComponent implements AfterViewInit, OnInit {
   @ViewChild('mapElement') mapElement!: ElementRef;
   private map!: L.Map;
   private platformId = inject(PLATFORM_ID);
+  private http = inject(HttpClient);
+
+  suggestedRoute = signal<RouteData | null>(null);
+
+  ngOnInit() {
+    this.http.get<RouteData[]>(`${environment.apiUrl}/routes`).subscribe({
+      next: (routes) => {
+        if (routes && routes.length > 0) {
+          const randomIndex = Math.floor(Math.random() * routes.length);
+          this.suggestedRoute.set(routes[randomIndex]);
+        }
+      },
+      error: () => console.error('Error fetching routes for suggestion'),
+    });
+  }
 
   async ngAfterViewInit() {
     if (isPlatformBrowser(this.platformId)) {

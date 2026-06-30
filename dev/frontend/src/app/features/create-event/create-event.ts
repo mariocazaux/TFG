@@ -10,11 +10,13 @@ import {
 import { isPlatformBrowser, CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
+import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
 import { FormInputComponent } from '../../shared/components/form-input/form-input';
+import { EventData } from '../../shared/components/event-card/event-card';
 import { ButtonComponent } from '../../shared/components/button/button';
+import { environment } from '../../../environments/environment';
 import type * as L from 'leaflet';
-
 @Component({
   selector: 'app-create-event',
   standalone: true,
@@ -28,6 +30,8 @@ export class CreateEventComponent implements OnInit, AfterViewInit {
   private readonly fb = inject(FormBuilder);
   private readonly http = inject(HttpClient);
   private readonly authService = inject(AuthService);
+  private readonly route = inject(ActivatedRoute);
+  private readonly router = inject(Router);
 
   eventForm!: FormGroup;
   private map!: L.Map;
@@ -38,6 +42,10 @@ export class CreateEventComponent implements OnInit, AfterViewInit {
   successMessage = '';
   errorMessage = '';
 
+  isEditMode = false;
+  editEventId: string | null = null;
+  private loadedEventData: EventData | null = null;
+
   ngOnInit() {
     this.eventForm = this.fb.group({
       title: ['', Validators.required],
@@ -45,6 +53,12 @@ export class CreateEventComponent implements OnInit, AfterViewInit {
       event_date: ['', Validators.required],
       max_attendees: [50, [Validators.required, Validators.min(1)]],
     });
+
+    this.editEventId = this.route.snapshot.paramMap.get('id');
+    if (this.editEventId) {
+      this.isEditMode = true;
+      this.loadEventData(this.editEventId);
+    }
   }
 
   private platformId = inject(PLATFORM_ID);
@@ -56,6 +70,54 @@ export class CreateEventComponent implements OnInit, AfterViewInit {
     }
   }
 
+  loadEventData(id: string) {
+    this.http.get<EventData>(`${environment.apiUrl}/events/${id}`).subscribe({
+      next: (data) => {
+        this.loadedEventData = data;
+
+        // Formatear la fecha para input type="datetime-local" (YYYY-MM-DDThh:mm)
+        let formattedDate = '';
+        if (data.event_date) {
+          const dateObj = new Date(data.event_date);
+          const isoString = dateObj.toISOString();
+          formattedDate = isoString.substring(0, 16);
+        }
+
+        this.eventForm.patchValue({
+          title: data.title,
+          description: data.description,
+          event_date: formattedDate,
+          max_attendees: data.max_attendees,
+        });
+
+        if (this.map) {
+          this.drawLoadedEvent();
+        }
+      },
+      error: () => {
+        this.errorMessage = 'No se pudo cargar la quedada para edición.';
+      },
+    });
+  }
+
+  private drawLoadedEvent() {
+    if (
+      !this.loadedEventData ||
+      !this.loadedEventData.location_coords ||
+      !this.loadedEventData.location_coords.coordinates
+    ) {
+      return;
+    }
+
+    // GeoJSON is [lng, lat]
+    const coords = this.loadedEventData.location_coords.coordinates;
+    const lng = coords[0];
+    const lat = coords[1];
+
+    this.setMarker(lat, lng);
+    this.map.setView([lat, lng], 14);
+  }
+
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private initMap(L: any): void {
     this.map = L.map(this.mapElement.nativeElement).setView([40.4168, -3.7038], 6);
@@ -65,7 +127,6 @@ export class CreateEventComponent implements OnInit, AfterViewInit {
       attribution: '© OpenStreetMap',
     }).addTo(this.map);
 
-    // Ajuste de icono
     const iconDefault = L.icon({
       iconRetinaUrl: 'assets/marker-icon-2x.png',
       iconUrl: 'assets/marker-icon.png',
@@ -75,7 +136,6 @@ export class CreateEventComponent implements OnInit, AfterViewInit {
     });
     L.Marker.prototype.options.icon = iconDefault;
 
-    // Colocar un Pin al hacer clic
     this.map.on('click', (e: L.LeafletMouseEvent) => {
       if (this.currentMarker) {
         this.map.removeLayer(this.currentMarker);
@@ -84,10 +144,12 @@ export class CreateEventComponent implements OnInit, AfterViewInit {
       this.selectedLocation = [e.latlng.lng, e.latlng.lat];
     });
 
-    // Fix map rendering issue on init
     setTimeout(() => {
       if (this.map) {
         this.map.invalidateSize();
+        if (this.loadedEventData) {
+          this.drawLoadedEvent();
+        }
       }
     }, 100);
   }
@@ -100,11 +162,13 @@ export class CreateEventComponent implements OnInit, AfterViewInit {
     }
   }
 
-  private async setMarker(lat: number, lng: number) {
+  private setMarker(lat: number, lng: number) {
     if (!this.map) {
       return;
     }
-    const L = await import('leaflet');
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const L = (window as any).L;
 
     if (this.currentMarker) {
       this.map.removeLayer(this.currentMarker);
@@ -136,12 +200,21 @@ export class CreateEventComponent implements OnInit, AfterViewInit {
     const token = this.authService.getToken();
     const headers = { Authorization: `Bearer ${token}` };
 
-    this.http.post('http://localhost:3000/api/events', payload, { headers }).subscribe({
+    const request = this.isEditMode
+      ? this.http.put(`${environment.apiUrl}/events/${this.editEventId}`, payload, { headers })
+      : this.http.post(`${environment.apiUrl}/events`, payload, { headers });
+
+    request.subscribe({
       next: () => {
         this.isSaving = false;
-        this.successMessage = 'Quedada creada con éxito.';
-        this.clearPin();
-        this.eventForm.reset({ max_attendees: 50 });
+        this.successMessage = this.isEditMode
+          ? 'Quedada actualizada con éxito.'
+          : 'Quedada creada con éxito.';
+        if (!this.isEditMode) {
+          this.clearPin();
+          this.eventForm.reset({ max_attendees: 50 });
+        }
+        setTimeout(() => this.router.navigate(['/app/events']), 1500);
       },
       error: (err) => {
         this.isSaving = false;

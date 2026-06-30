@@ -10,11 +10,13 @@ import {
 import { isPlatformBrowser, CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
+import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
 import { FormInputComponent } from '../../shared/components/form-input/form-input';
+import { RouteData } from '../../shared/components/route-card/route-card';
 import { ButtonComponent } from '../../shared/components/button/button';
+import { environment } from '../../../environments/environment';
 import type * as L from 'leaflet';
-
 @Component({
   selector: 'app-create-route',
   standalone: true,
@@ -28,6 +30,8 @@ export class CreateRouteComponent implements OnInit, AfterViewInit {
   private readonly fb = inject(FormBuilder);
   private readonly http = inject(HttpClient);
   private readonly authService = inject(AuthService);
+  private readonly route = inject(ActivatedRoute);
+  private readonly router = inject(Router);
 
   routeForm!: FormGroup;
   private map!: L.Map;
@@ -38,6 +42,10 @@ export class CreateRouteComponent implements OnInit, AfterViewInit {
   successMessage = '';
   errorMessage = '';
 
+  isEditMode = false;
+  editRouteId: string | null = null;
+  private loadedRouteData: RouteData | null = null;
+
   ngOnInit() {
     this.routeForm = this.fb.group({
       title: ['', Validators.required],
@@ -45,6 +53,12 @@ export class CreateRouteComponent implements OnInit, AfterViewInit {
       vehicle_category: ['both', Validators.required],
       difficulty: ['medium', Validators.required],
     });
+
+    this.editRouteId = this.route.snapshot.paramMap.get('id');
+    if (this.editRouteId) {
+      this.isEditMode = true;
+      this.loadRouteData(this.editRouteId);
+    }
   }
 
   private platformId = inject(PLATFORM_ID);
@@ -57,6 +71,65 @@ export class CreateRouteComponent implements OnInit, AfterViewInit {
     }
   }
 
+  loadRouteData(id: string) {
+    this.http.get<RouteData>(`${environment.apiUrl}/routes/${id}`).subscribe({
+      next: (data) => {
+        this.loadedRouteData = data;
+        this.routeForm.patchValue({
+          title: data.title,
+          description: data.description,
+          vehicle_category: data.vehicle_category,
+          difficulty: data.difficulty,
+        });
+
+        if (this.routingControl && this.map) {
+          this.drawLoadedRoute();
+        }
+      },
+      error: () => {
+        this.errorMessage = 'No se pudo cargar la ruta para edición.';
+      },
+    });
+  }
+
+  private drawLoadedRoute() {
+    if (
+      !this.loadedRouteData ||
+      !this.loadedRouteData.path_coords ||
+      !this.loadedRouteData.path_coords.coordinates
+    ) {
+      return;
+    }
+
+    // GeoJSON is [lng, lat], Leaflet wants [lat, lng]
+    // However, if we just take the first and last point to let OSRM recalculate, it might differ slightly,
+    // but it's the easiest way to edit a route.
+    // Or we can place all points as waypoints, but OSRM has a limit. Let's just pick a few key points (start, middle, end) if there are too many, or just first and last for simplicity.
+    // To make it fully editable, we'll extract a few evenly spaced points (max 10).
+    const coords = this.loadedRouteData.path_coords.coordinates;
+    const numPoints = Math.min(coords.length, 10);
+    const step = Math.max(1, Math.floor(coords.length / numPoints));
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const L = (window as any).L;
+
+    this.waypoints = [];
+    for (let i = 0; i < coords.length; i += step) {
+      this.waypoints.push(L.latLng(coords[i][1], coords[i][0]));
+    }
+    // Ensure last point is included
+    if (coords.length > 0 && (coords.length - 1) % step !== 0) {
+      const last = coords[coords.length - 1];
+      this.waypoints.push(L.latLng(last[1], last[0]));
+    }
+
+    this.routingControl.setWaypoints(this.waypoints);
+
+    if (this.waypoints.length > 0) {
+      this.map.fitBounds(L.latLngBounds(this.waypoints));
+    }
+  }
+
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private initMap(L: any): void {
     this.map = L.map(this.mapElement.nativeElement).setView([40.4168, -3.7038], 6);
@@ -66,24 +139,24 @@ export class CreateRouteComponent implements OnInit, AfterViewInit {
       attribution: '© OpenStreetMap',
     }).addTo(this.map);
 
-    // Configurar routing control sin waypoints inicialmente
     this.routingControl = L.Routing.control({
       waypoints: [],
       routeWhileDragging: true,
-      show: false, // no mostrar panel de texto
+      show: false,
       addWaypoints: false,
     }).addTo(this.map);
 
-    // Al hacer click en el mapa, añadir waypoint
     this.map.on('click', (e: L.LeafletMouseEvent) => {
       this.waypoints.push(e.latlng);
       this.routingControl.setWaypoints(this.waypoints);
     });
 
-    // Fix map rendering issue on init
     setTimeout(() => {
       if (this.map) {
         this.map.invalidateSize();
+        if (this.loadedRouteData) {
+          this.drawLoadedRoute();
+        }
       }
     }, 100);
   }
@@ -113,14 +186,6 @@ export class CreateRouteComponent implements OnInit, AfterViewInit {
     this.errorMessage = '';
     this.successMessage = '';
 
-    // Extraer coordenadas de la ruta calculada por OSRM
-    // routingControl.getRouter() devuelve la ruta, pero es asíncrono si lo forzamos.
-    // La forma más segura es extraer los waypoints si confiamos en el straight line,
-    // PERO como Leaflet Routing Machine ya ha dibujado la línea, podemos coger las coordenadas
-    // del objeto route que nos da el evento 'routesfound'.
-
-    // Para simplificar y asegurar que funciona, usaremos un truco:
-    // Listen to the last calculated route
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const routes = (this.routingControl as any)._routes;
     let finalCoordinates: number[][];
@@ -128,11 +193,10 @@ export class CreateRouteComponent implements OnInit, AfterViewInit {
 
     if (routes && routes.length > 0) {
       const bestRoute = routes[0];
-      distance = bestRoute.summary.totalDistance / 1000; // km
+      distance = bestRoute.summary.totalDistance / 1000;
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       finalCoordinates = bestRoute.coordinates.map((c: any) => [c.lng, c.lat]);
     } else {
-      // Fallback a los waypoints en línea recta si no hay ruta calculada
       finalCoordinates = this.waypoints.map((wp) => [wp.lng, wp.lat]);
     }
 
@@ -147,12 +211,21 @@ export class CreateRouteComponent implements OnInit, AfterViewInit {
       Authorization: `Bearer ${token}`,
     };
 
-    this.http.post('http://localhost:3000/api/routes', payload, { headers }).subscribe({
+    const request = this.isEditMode
+      ? this.http.put(`${environment.apiUrl}/routes/${this.editRouteId}`, payload, { headers })
+      : this.http.post(`${environment.apiUrl}/routes`, payload, { headers });
+
+    request.subscribe({
       next: () => {
         this.isSaving = false;
-        this.successMessage = 'Ruta creada con éxito.';
-        this.clearRoute();
-        this.routeForm.reset({ vehicle_category: 'both', difficulty: 'medium' });
+        this.successMessage = this.isEditMode
+          ? 'Ruta actualizada con éxito.'
+          : 'Ruta creada con éxito.';
+        if (!this.isEditMode) {
+          this.clearRoute();
+          this.routeForm.reset({ vehicle_category: 'both', difficulty: 'medium' });
+        }
+        setTimeout(() => this.router.navigate(['/app/events']), 1500);
       },
       error: (err) => {
         this.isSaving = false;

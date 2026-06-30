@@ -92,3 +92,120 @@ export const getAllRoutes = async (req: Request, res: Response) => {
     return res.status(500).json({ error: 'Error del servidor' });
   }
 };
+
+export const getRouteById = async (req: Request, res: Response) => {
+  try {
+    const supabase = createClient(supabaseUrl, supabaseKey);
+    const routeId = req.params.id;
+
+    const { data, error } = await supabase
+      .from('routes')
+      .select(`*, creator:profiles(username, avatar_url, full_name)`)
+      .eq('id', routeId)
+      .single();
+
+    if (error) {
+      return res.status(404).json({ error: 'Ruta no encontrada' });
+    }
+
+    return res.status(200).json(data);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: 'Error del servidor' });
+  }
+};
+
+export const updateRoute = async (req: Request, res: Response) => {
+  try {
+    const authHeader = req.headers.authorization;
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return res.status(401).json({ error: 'Falta el token de autorización' });
+    }
+    const token = authHeader.split(' ')[1];
+
+    const userSupabase = createClient(supabaseUrl, supabaseKey, {
+      global: { headers: { Authorization: `Bearer ${token}` } },
+    });
+
+    const { data: userData, error: userError } = await userSupabase.auth.getUser();
+    if (userError || !userData.user) {
+      return res.status(401).json({ error: 'Token inválido' });
+    }
+
+    const routeId = req.params.id;
+    const { title, description, vehicle_category, difficulty, coordinates, distance_km } = req.body;
+
+    if (!title || !coordinates || !Array.isArray(coordinates)) {
+      return res.status(400).json({ error: 'Faltan campos obligatorios o coordenadas inválidas' });
+    }
+
+    const geojson = {
+      type: 'LineString',
+      coordinates: coordinates,
+    };
+
+    const { data, error } = await userSupabase
+      .from('routes')
+      .update({
+        title,
+        description,
+        vehicle_category: vehicle_category || 'both',
+        difficulty: difficulty || 'medium',
+        path_coords: geojson,
+        distance_km,
+      })
+      .eq('id', routeId)
+      .eq('creator_id', userData.user.id) // Only allow update if user is the creator
+      .select()
+      .single();
+
+    if (error) {
+      console.error('Error actualizando ruta:', error);
+      return res
+        .status(500)
+        .json({ error: 'Error interno actualizando la ruta o no tienes permisos' });
+    }
+
+    return res.status(200).json(data);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: 'Error del servidor' });
+  }
+};
+
+export const deleteRoute = async (req: Request, res: Response) => {
+  try {
+    const authHeader = req.headers.authorization;
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return res.status(401).json({ error: 'Falta el token de autorización' });
+    }
+    const token = authHeader.split(' ')[1];
+
+    const userSupabase = createClient(supabaseUrl, supabaseKey, {
+      global: { headers: { Authorization: `Bearer ${token}` } },
+    });
+
+    const { data: userData, error: userError } = await userSupabase.auth.getUser();
+    if (userError || !userData.user) {
+      return res.status(401).json({ error: 'Token inválido' });
+    }
+
+    const routeId = req.params.id;
+
+    const { error } = await userSupabase
+      .from('routes')
+      .delete()
+      .eq('id', routeId)
+      .eq('creator_id', userData.user.id);
+
+    if (error) {
+      console.error('Error borrando ruta:', error);
+      return res.status(500).json({ error: 'Error interno borrando la ruta o no tienes permisos' });
+    }
+
+    return res.status(200).json({ message: 'Ruta eliminada con éxito' });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: 'Error del servidor' });
+  }
+};

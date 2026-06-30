@@ -1,1 +1,32 @@
-<p>route-card works!</p>
+<div class="route-card">
+  <div class="card-header">
+    <h3>{{ routeData().title }}</h3>
+    <span class="difficulty" [ngClass]="routeData().difficulty">{{ routeData().difficulty }}</span>
+  </div>
+
+  <div class="card-body">
+    <p class="desc">{{ routeData().description }}</p>
+
+    <div class="creator">
+      <span
+        >Creado por: <strong>&#64;{{ routeData().creator.username }}</strong></span
+      >
+    </div>
+
+    <div class="stats">
+      <span class="badge"> Distancia: {{ routeData().distance_km | number: '1.1-2' }} km </span>
+      <span class="badge"> Vehículo: {{ routeData().vehicle_category }} </span>
+    </div>
+  </div>
+
+  @if (canEditOrDelete()) {
+    <div class="card-footer">
+      <app-button variant="secondary" [fullWidth]="false" (clicked)="edit.emit(routeData())">
+        Editar
+      </app-button>
+      <app-button variant="danger" [fullWidth]="false" (clicked)="delete.emit(routeData())">
+        Eliminar
+      </app-button>
+    </div>
+  }
+</div>

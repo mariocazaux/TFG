@@ -9,6 +9,7 @@ export interface EventData {
   event_date: string;
   max_attendees: number;
   attendees: { count: number }[];
+  organizer_id: string;
   organizer: { username: string; full_name: string; avatar_url: string };
   location_coords: { coordinates: [number, number] };
 }
@@ -22,7 +23,11 @@ export interface EventData {
 })
 export class EventCardComponent {
   event = input.required<EventData>();
+  currentUserId = input<string | null>(null);
+
   attend = output<EventData>();
+  edit = output<EventData>();
+  delete = output<EventData>();
 
   getAttendeesCount(): number {
     return this.event().attendees?.[0]?.count || 0;
@@ -30,5 +35,9 @@ export class EventCardComponent {
 
   isFull(): boolean {
     return this.getAttendeesCount() >= this.event().max_attendees;
+  }
+
+  canEditOrDelete(): boolean {
+    return this.currentUserId() === this.event().organizer_id;
   }
 }
