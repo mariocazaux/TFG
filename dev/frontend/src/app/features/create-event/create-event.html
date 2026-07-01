@@ -1,6 +1,6 @@
 <div class="create-event-container">
   <div class="sidebar">
-    <h2>Crear Quedada (Estática)</h2>
+    <h2>Crear Quedada</h2>
     <p>
       Organiza un punto de encuentro. Haz clic en el mapa para soltar un Pin 📍 con la ubicación
       exacta.
@@ -31,10 +31,16 @@
 
       <div class="form-group">
         <label for="route_id" class="form-group__label">Añadir una Ruta (Opcional)</label>
-        <select id="route_id" formControlName="route_id" class="form-group__input">
-          <option value="">-- Ninguna --</option>
-          @for (route of availableRoutes; track route.id) {
-            <option [value]="route.id">{{ route.title }} ({{ route.distance_km }}km)</option>
+        <select id="route_id" formControlName="route_id" class="form-group__select">
+          @if (isLoadingRoutes) {
+            <option value="">Cargando tus rutas...</option>
+          } @else {
+            <option value="">-- Ninguna --</option>
+            @for (route of availableRoutes; track route.id) {
+              <option [value]="route.id">
+                {{ route.title }} ({{ route.distance_km }}km) - Dificultad: {{ route.difficulty }}
+              </option>
+            }
           }
         </select>
       </div>
@@ -49,15 +55,15 @@
         </app-form-input>
 
         <app-form-input id="time" type="time" label="Hora" formControlName="time"> </app-form-input>
-
-        <app-form-input
-          id="max_attendees"
-          type="number"
-          label="Aforo Máximo"
-          formControlName="max_attendees"
-        >
-        </app-form-input>
       </div>
+
+      <app-form-input
+        id="max_attendees"
+        type="number"
+        label="Aforo Máximo"
+        formControlName="max_attendees"
+      >
+      </app-form-input>
 
       @if (errorMessage) {
         <div class="error-msg">{{ errorMessage }}</div>

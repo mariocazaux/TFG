@@ -19,7 +19,7 @@ import { ControlValueAccessor, NG_VALUE_ACCESSOR, ReactiveFormsModule } from '@a
 export class FormInputComponent implements ControlValueAccessor {
   id = input.required<string>();
   label = input.required<string>();
-  type = input<'text' | 'email' | 'password' | 'number' | 'date'>('text');
+  type = input<'text' | 'email' | 'password' | 'number' | 'date' | 'time'>('text');
   placeholder = input<string>('');
   error = input<string>('');
 

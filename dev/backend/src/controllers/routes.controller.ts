@@ -365,3 +365,102 @@ export const getMyBookmarkedRoutes = async (req: Request, res: Response) => {
     return res.status(500).json({ error: 'Error del servidor' });
   }
 };
+
+export const getMyRoutes = async (req: Request, res: Response) => {
+  try {
+    const authHeader = req.headers.authorization;
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return res.status(401).json({ error: 'Falta el token de autorización' });
+    }
+    const token = authHeader.split(' ')[1];
+
+    const userSupabase = createClient(supabaseUrl, supabaseKey, {
+      global: { headers: { Authorization: `Bearer ${token}` } },
+    });
+
+    const { data: userData, error: userError } = await userSupabase.auth.getUser();
+    if (userError || !userData.user) {
+      return res.status(401).json({ error: 'Token inválido' });
+    }
+
+    const { data, error } = await userSupabase
+      .from('routes')
+      .select('*, creator:profiles!routes_creator_id_fkey(username, avatar_url, full_name)')
+      .eq('creator_id', userData.user.id)
+      .order('created_at', { ascending: false });
+
+    if (error) {
+      console.error('Error obteniendo mis rutas:', error);
+      return res.status(500).json({ error: 'Error interno obteniendo mis rutas' });
+    }
+
+    const routes = data.map((r: any) => ({
+      ...r,
+      creator: Array.isArray(r.creator) ? r.creator[0] : r.creator,
+    }));
+
+    return res.status(200).json(routes);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: 'Error del servidor' });
+  }
+};
+
+export const getMyAvailableRoutes = async (req: Request, res: Response) => {
+  try {
+    const authHeader = req.headers.authorization;
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return res.status(401).json({ error: 'Falta el token de autorización' });
+    }
+    const token = authHeader.split(' ')[1];
+    if (!token) {
+      return res.status(401).json({ error: 'Falta el token de autorización' });
+    }
+
+    // Decode JWT payload locally to bypass auth.getUser() latency
+    const parts = token.split('.');
+    if (parts.length < 2) {
+      return res.status(401).json({ error: 'Token inválido' });
+    }
+    const payloadBase64Url = parts[1] || '';
+    const payloadBase64 = payloadBase64Url.replace(/-/g, '+').replace(/_/g, '/');
+    const payloadJson = Buffer.from(payloadBase64, 'base64').toString('utf8');
+    const payload = JSON.parse(payloadJson);
+    const userId = payload.sub;
+
+    if (!userId) {
+      return res.status(401).json({ error: 'Token inválido' });
+    }
+
+    const userSupabase = createClient(supabaseUrl, supabaseKey, {
+      global: { headers: { Authorization: `Bearer ${token}` } },
+    });
+
+    const [createdRes, bookmarkedRes] = await Promise.all([
+      userSupabase
+        .from('routes')
+        .select('id, title, distance_km, difficulty')
+        .eq('creator_id', userId)
+        .order('created_at', { ascending: false }),
+      userSupabase
+        .from('route_bookmarks')
+        .select('routes(id, title, distance_km, difficulty)')
+        .eq('user_id', userId)
+        .order('created_at', { ascending: false }),
+    ]);
+
+    const createdRoutes = createdRes.data || [];
+
+    const bookmarkedRoutes = (bookmarkedRes.data || [])
+      .map((item: any) => item.routes)
+      .filter(Boolean);
+
+    const allRoutes = [...createdRoutes, ...bookmarkedRoutes];
+    const uniqueRoutes = Array.from(new Map(allRoutes.map((r: any) => [r.id, r])).values());
+
+    return res.status(200).json(uniqueRoutes);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: 'Error del servidor' });
+  }
+};

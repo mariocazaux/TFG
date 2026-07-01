@@ -44,6 +44,7 @@ export class ProfilePageComponent implements OnInit {
   activeTab = signal<'garage' | 'events' | 'routes'>('garage');
   attendedEvents = signal<EventData[]>([]);
   bookmarkedRoutes = signal<RouteData[]>([]);
+  createdRoutes = signal<RouteData[]>([]);
 
   // Estado para el modal de confirmación de eliminación
   vehicleToDelete = signal<Vehicle | undefined>(undefined);
@@ -54,6 +55,7 @@ export class ProfilePageComponent implements OnInit {
     this.loadVehicles();
     this.loadMyAttendedEvents();
     this.loadMyBookmarkedRoutes();
+    this.loadMyCreatedRoutes();
   }
 
   setTab(tab: 'garage' | 'events' | 'routes') {
@@ -77,6 +79,15 @@ export class ProfilePageComponent implements OnInit {
         this.bookmarkedRoutes.set(mapped);
       },
       error: (err) => console.error('Error loading bookmarked routes:', err),
+    });
+  }
+
+  loadMyCreatedRoutes() {
+    this.http.get<RouteData[]>(`${environment.apiUrl}/routes/my-routes`).subscribe({
+      next: (routes) => {
+        this.createdRoutes.set(routes);
+      },
+      error: (err) => console.error('Error loading created routes:', err),
     });
   }
 

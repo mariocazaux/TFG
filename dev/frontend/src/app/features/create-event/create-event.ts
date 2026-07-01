@@ -48,6 +48,7 @@ export class CreateEventComponent implements OnInit, AfterViewInit {
   private loadedEventData: EventData | null = null;
 
   availableRoutes: RouteData[] = [];
+  isLoadingRoutes = true;
 
   ngOnInit() {
     this.eventForm = this.fb.group({
@@ -78,22 +79,25 @@ export class CreateEventComponent implements OnInit, AfterViewInit {
   }
 
   loadAvailableRoutes() {
-    this.authService.token$.subscribe((token) => {
-      if (!token) {
-        return;
-      }
+    const token = this.authService.getToken();
+    if (!token) {
+      return;
+    }
 
-      this.http
-        .get<RouteData[]>(`${environment.apiUrl}/routes/my-bookmarked-routes`, {
-          headers: { Authorization: `Bearer ${token}` },
-        })
-        .subscribe({
-          next: (routes) => {
-            this.availableRoutes = routes;
-          },
-          error: (err) => console.error('Error loading routes:', err),
-        });
-    });
+    const headers = { Authorization: `Bearer ${token}` };
+
+    this.http
+      .get<RouteData[]>(`${environment.apiUrl}/routes/my-available-routes`, { headers })
+      .subscribe({
+        next: (routes) => {
+          this.availableRoutes = routes;
+          this.isLoadingRoutes = false;
+        },
+        error: (err) => {
+          console.error('Error loading routes:', err);
+          this.isLoadingRoutes = false;
+        },
+      });
   }
 
   loadEventData(id: string) {

@@ -45,7 +45,7 @@ export const createEvent = async (req: Request, res: Response) => {
         event_date,
         max_attendees,
         location_coords: geojson,
-        time,
+        time: time || null,
         route_id: route_id || null,
       })
       .select()

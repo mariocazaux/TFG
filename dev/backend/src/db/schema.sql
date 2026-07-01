@@ -218,3 +218,27 @@ CREATE POLICY "Users can update own vehicle." ON public.vehicles FOR UPDATE USIN
 CREATE POLICY "Users can delete own vehicle." ON public.vehicles FOR DELETE USING (auth.uid() = owner_id);
 
 -- En el futuro se pueden añadir políticas para las demás tablas.
+
+-- Routes
+CREATE POLICY "Routes viewable by everyone." ON public.routes FOR SELECT USING (true);
+CREATE POLICY "Users can insert their own routes." ON public.routes FOR INSERT WITH CHECK (auth.uid() = creator_id);
+CREATE POLICY "Users can update own routes." ON public.routes FOR UPDATE USING (auth.uid() = creator_id);
+CREATE POLICY "Users can delete own routes." ON public.routes FOR DELETE USING (auth.uid() = creator_id);
+
+-- Events
+CREATE POLICY "Events viewable by everyone." ON public.events FOR SELECT USING (true);
+CREATE POLICY "Users can insert their own events." ON public.events FOR INSERT WITH CHECK (auth.uid() = organizer_id);
+CREATE POLICY "Users can update own events." ON public.events FOR UPDATE USING (auth.uid() = organizer_id);
+CREATE POLICY "Users can delete own events." ON public.events FOR DELETE USING (auth.uid() = organizer_id);
+
+-- Event Attendees
+ALTER TABLE public.event_attendees ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Event attendees viewable by everyone." ON public.event_attendees FOR SELECT USING (true);
+CREATE POLICY "Users can attend events." ON public.event_attendees FOR INSERT WITH CHECK (auth.uid() = user_id);
+CREATE POLICY "Users can leave events." ON public.event_attendees FOR DELETE USING (auth.uid() = user_id);
+
+-- Route Bookmarks
+ALTER TABLE public.route_bookmarks ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Route bookmarks viewable by everyone." ON public.route_bookmarks FOR SELECT USING (true);
+CREATE POLICY "Users can bookmark routes." ON public.route_bookmarks FOR INSERT WITH CHECK (auth.uid() = user_id);
+CREATE POLICY "Users can unbookmark routes." ON public.route_bookmarks FOR DELETE USING (auth.uid() = user_id);

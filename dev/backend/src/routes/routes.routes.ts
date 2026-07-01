@@ -9,12 +9,16 @@ import {
   unbookmarkRoute,
   getMyBookmarks,
   getMyBookmarkedRoutes,
+  getMyRoutes,
+  getMyAvailableRoutes,
 } from '../controllers/routes.controller.ts';
 
 const router = Router();
 
 router.post('/', createRoute);
 router.get('/', getAllRoutes);
+router.get('/my-available-routes', getMyAvailableRoutes);
+router.get('/my-routes', getMyRoutes);
 router.get('/my-bookmarks', getMyBookmarks);
 router.get('/my-bookmarked-routes', getMyBookmarkedRoutes);
 router.get('/:id', getRouteById);
