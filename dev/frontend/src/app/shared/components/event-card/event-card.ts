@@ -1,6 +1,7 @@
 import { Component, input, output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ButtonComponent } from '../button/button';
+import { RouteData } from '../route-card/route-card';
 
 export interface EventData {
   id: string;
@@ -12,6 +13,9 @@ export interface EventData {
   organizer_id: string;
   organizer: { username: string; full_name: string; avatar_url: string };
   location_coords: { coordinates: [number, number] };
+  time?: string;
+  route_id?: string;
+  route?: RouteData;
   isAttending?: boolean;
 }
 
@@ -29,6 +33,7 @@ export class EventCardComponent {
   attend = output<EventData>();
   edit = output<EventData>();
   delete = output<EventData>();
+  viewRoute = output<string>();
 
   getAttendeesCount(): number {
     return this.event().attendees?.[0]?.count || 0;

@@ -53,8 +53,7 @@
 
   @if (activeTab() === 'garage') {
     <section class="profile__garage">
-      <div class="profile__garage-header">
-        <h2 class="profile__garage-title">Mi Garaje</h2>
+      <div class="profile__garage-header" style="justify-content: flex-end">
         <app-button variant="primary" (click)="openAddModal()">+ Añadir</app-button>
       </div>
 
@@ -79,9 +78,7 @@
 
   @if (activeTab() === 'events') {
     <section class="profile__garage">
-      <div class="profile__garage-header">
-        <h2 class="profile__garage-title">Mis Quedadas</h2>
-      </div>
+      <div class="profile__garage-header" style="display: none"></div>
 
       <div class="profile__garage-grid">
         @for (event of attendedEvents(); track event.id) {
@@ -102,9 +99,7 @@
 
   @if (activeTab() === 'routes') {
     <section class="profile__garage">
-      <div class="profile__garage-header">
-        <h2 class="profile__garage-title">Mis Rutas Guardadas</h2>
-      </div>
+      <div class="profile__garage-header" style="display: none"></div>
 
       <div class="profile__garage-grid">
         @for (route of bookmarkedRoutes(); track route.id) {

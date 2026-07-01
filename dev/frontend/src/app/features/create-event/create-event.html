@@ -29,14 +29,26 @@
         ></textarea>
       </div>
 
+      <div class="form-group">
+        <label for="route_id" class="form-group__label">Añadir una Ruta (Opcional)</label>
+        <select id="route_id" formControlName="route_id" class="form-group__input">
+          <option value="">-- Ninguna --</option>
+          @for (route of availableRoutes; track route.id) {
+            <option [value]="route.id">{{ route.title }} ({{ route.distance_km }}km)</option>
+          }
+        </select>
+      </div>
+
       <div class="form-row">
         <app-form-input
           id="event_date"
           type="date"
-          label="Fecha y Hora"
+          label="Día de la Quedada"
           formControlName="event_date"
         >
         </app-form-input>
+
+        <app-form-input id="time" type="time" label="Hora" formControlName="time"> </app-form-input>
 
         <app-form-input
           id="max_attendees"

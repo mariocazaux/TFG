@@ -25,7 +25,7 @@ export const createEvent = async (req: Request, res: Response) => {
       return res.status(401).json({ error: 'Token inválido' });
     }
 
-    const { title, description, event_date, max_attendees, location } = req.body;
+    const { title, description, event_date, max_attendees, location, time, route_id } = req.body;
 
     if (!title || !event_date || !location || !Array.isArray(location)) {
       return res.status(400).json({ error: 'Faltan campos obligatorios o ubicación inválida' });
@@ -45,6 +45,8 @@ export const createEvent = async (req: Request, res: Response) => {
         event_date,
         max_attendees,
         location_coords: geojson,
+        time,
+        route_id: route_id || null,
       })
       .select()
       .single();
@@ -73,7 +75,8 @@ export const getAllEvents = async (req: Request, res: Response) => {
         `
         *,
         organizer:profiles!events_organizer_id_fkey(username, avatar_url, full_name),
-        attendees:event_attendees(count)
+        attendees:event_attendees(count),
+        route:routes(*)
       `,
       )
       .order('event_date', { ascending: true });
@@ -164,7 +167,8 @@ export const getEventById = async (req: Request, res: Response) => {
         `
         *,
         organizer:profiles!events_organizer_id_fkey(username, avatar_url, full_name),
-        attendees:event_attendees(count)
+        attendees:event_attendees(count),
+        route:routes(*)
       `,
       )
       .eq('id', eventId)
@@ -199,7 +203,7 @@ export const updateEvent = async (req: Request, res: Response) => {
     }
 
     const eventId = req.params.id;
-    const { title, description, event_date, max_attendees, location } = req.body;
+    const { title, description, event_date, max_attendees, location, time, route_id } = req.body;
 
     if (!title || !event_date || !location || !Array.isArray(location)) {
       return res.status(400).json({ error: 'Faltan campos obligatorios o ubicación inválida' });
@@ -218,6 +222,8 @@ export const updateEvent = async (req: Request, res: Response) => {
         event_date,
         max_attendees,
         location_coords: geojson,
+        time,
+        route_id: route_id || null,
       })
       .eq('id', eventId)
       .eq('organizer_id', userData.user.id) // Only allow update if user is the organizer
@@ -370,7 +376,7 @@ export const getMyAttendedEvents = async (req: Request, res: Response) => {
     const { data, error } = await userSupabase
       .from('event_attendees')
       .select(
-        'events(*, organizer:profiles!events_organizer_id_fkey(username, avatar_url, full_name), attendees:event_attendees(count))',
+        'events(*, organizer:profiles!events_organizer_id_fkey(username, avatar_url, full_name), attendees:event_attendees(count), route:routes(*))',
       )
       .eq('user_id', userData.user.id)
       .order('created_at', { ascending: false });

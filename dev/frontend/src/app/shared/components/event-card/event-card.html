@@ -2,7 +2,12 @@
   <img [src]="getPlaceholderImage()" alt="Event Image" class="card-image" />
   <div class="card-header">
     <h3>{{ event().title }}</h3>
-    <span class="date">{{ event().event_date | date: 'medium' }}</span>
+    <span class="date"
+      >{{ event().event_date | date: 'longDate' }}
+      @if (event().time) {
+        - {{ event().time }}
+      }
+    </span>
   </div>
 
   <div class="card-body">
@@ -13,6 +18,19 @@
         >Organizado por: <strong>&#64;{{ event().organizer.username }}</strong></span
       >
     </div>
+
+    @if (event().route) {
+      <div class="route-indicator">
+        <span
+          class="route-badge"
+          tabindex="0"
+          (click)="viewRoute.emit(event().route!.id)"
+          (keyup.enter)="viewRoute.emit(event().route!.id)"
+          (keyup.space)="viewRoute.emit(event().route!.id)"
+          >📍 Incluye Ruta: <strong>{{ event().route?.title }}</strong></span
+        >
+      </div>
+    }
 
     <div class="attendance">
       <span class="badge" [ngClass]="{ 'badge-full': isFull() }">

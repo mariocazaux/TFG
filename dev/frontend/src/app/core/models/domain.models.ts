@@ -54,8 +54,10 @@ export interface Event {
   title: string;
   description?: string;
   eventDate: string; // Mapped from event_date
+  time?: string; // TIME
   locationCoords?: string; // GeoJSON Point
   createdAt: string;
+  route?: Route; // The attached route
 }
 
 export type POIType = 'restaurant' | 'workshop' | 'viewpoint';

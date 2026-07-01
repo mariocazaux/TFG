@@ -66,6 +66,37 @@
       }
     }
 
+    .route-indicator {
+      margin-bottom: 1rem;
+
+      .route-badge {
+        display: inline-flex;
+        align-items: center;
+        padding: 0.35rem 0.75rem;
+        background: rgba(colors.$color-purple-500, 0.2);
+        color: colors.$color-purple-300;
+        border: 1px solid colors.$color-purple-500;
+        border-radius: 6px;
+        font-size: 0.85rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition:
+          background 0.2s,
+          box-shadow 0.2s;
+
+        &:hover {
+          background: rgba(colors.$color-purple-500, 0.3);
+
+          @include mixins.glow-purple(false);
+        }
+
+        strong {
+          color: #fff;
+          margin-left: 0.25rem;
+        }
+      }
+    }
+
     .attendance {
       .badge {
         display: inline-block;

@@ -14,6 +14,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
 import { FormInputComponent } from '../../shared/components/form-input/form-input';
 import { EventData } from '../../shared/components/event-card/event-card';
+import { RouteData } from '../../shared/components/route-card/route-card';
 import { ButtonComponent } from '../../shared/components/button/button';
 import { environment } from '../../../environments/environment';
 import type * as L from 'leaflet';
@@ -46,13 +47,19 @@ export class CreateEventComponent implements OnInit, AfterViewInit {
   editEventId: string | null = null;
   private loadedEventData: EventData | null = null;
 
+  availableRoutes: RouteData[] = [];
+
   ngOnInit() {
     this.eventForm = this.fb.group({
       title: ['', Validators.required],
       description: [''],
       event_date: ['', Validators.required],
+      time: [''],
+      route_id: [''],
       max_attendees: [50, [Validators.required, Validators.min(1)]],
     });
+
+    this.loadAvailableRoutes();
 
     this.editEventId = this.route.snapshot.paramMap.get('id');
     if (this.editEventId) {
@@ -70,6 +77,25 @@ export class CreateEventComponent implements OnInit, AfterViewInit {
     }
   }
 
+  loadAvailableRoutes() {
+    this.authService.token$.subscribe((token) => {
+      if (!token) {
+        return;
+      }
+
+      this.http
+        .get<RouteData[]>(`${environment.apiUrl}/routes/my-bookmarked-routes`, {
+          headers: { Authorization: `Bearer ${token}` },
+        })
+        .subscribe({
+          next: (routes) => {
+            this.availableRoutes = routes;
+          },
+          error: (err) => console.error('Error loading routes:', err),
+        });
+    });
+  }
+
   loadEventData(id: string) {
     this.http.get<EventData>(`${environment.apiUrl}/events/${id}`).subscribe({
       next: (data) => {
@@ -85,9 +111,11 @@ export class CreateEventComponent implements OnInit, AfterViewInit {
 
         this.eventForm.patchValue({
           title: data.title,
-          description: data.description,
+          description: data.description || '',
           event_date: formattedDate,
-          max_attendees: data.max_attendees,
+          time: data.time || '',
+          route_id: data.route_id || '',
+          max_attendees: data.max_attendees || 50,
         });
 
         if (this.map) {
