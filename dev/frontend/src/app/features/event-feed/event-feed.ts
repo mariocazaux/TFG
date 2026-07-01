@@ -1,5 +1,6 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
@@ -14,6 +15,7 @@ import { environment } from '../../../environments/environment';
   standalone: true,
   imports: [
     CommonModule,
+    FormsModule,
     RouterLink,
     EventCardComponent,
     RouteCardComponent,
@@ -33,6 +35,14 @@ export class EventFeedComponent implements OnInit {
   events = signal<EventData[]>([]);
   routes = signal<RouteData[]>([]);
 
+  // Filters for Events
+  eventDateFilter = signal<string>('');
+  eventPlaceFilter = signal<string>('');
+
+  // Filters for Routes
+  routeDifficultyFilter = signal<string>('');
+  routeMaxKmFilter = signal<string>('');
+
   errorMessage = signal<string>('');
   currentUserId: string | null = null;
 
@@ -49,8 +59,44 @@ export class EventFeedComponent implements OnInit {
     this.activeTab.set(tab);
   }
 
+  applyEventFilters(event?: Event) {
+    if (event) {
+      event.preventDefault();
+    }
+    this.loadEvents();
+  }
+
+  applyRouteFilters(event?: Event) {
+    if (event) {
+      event.preventDefault();
+    }
+    this.loadRoutes();
+  }
+
+  clearEventFilters() {
+    this.eventDateFilter.set('');
+    this.eventPlaceFilter.set('');
+    this.loadEvents();
+  }
+
+  clearRouteFilters() {
+    this.routeDifficultyFilter.set('');
+    this.routeMaxKmFilter.set('');
+    this.loadRoutes();
+  }
+
   loadEvents() {
-    this.http.get<EventData[]>(`${environment.apiUrl}/events?_t=${Date.now()}`).subscribe({
+    let url = `${environment.apiUrl}/events?_t=${Date.now()}`;
+    const date = this.eventDateFilter();
+    const place = this.eventPlaceFilter();
+    if (date) {
+      url += `&date=${encodeURIComponent(date)}`;
+    }
+    if (place) {
+      url += `&place=${encodeURIComponent(place)}`;
+    }
+
+    this.http.get<EventData[]>(url).subscribe({
       next: (events) => {
         if (this.currentUserId) {
           const token = this.authService.getToken();
@@ -76,7 +122,17 @@ export class EventFeedComponent implements OnInit {
   }
 
   loadRoutes() {
-    this.http.get<RouteData[]>(`${environment.apiUrl}/routes?_t=${Date.now()}`).subscribe({
+    let url = `${environment.apiUrl}/routes?_t=${Date.now()}`;
+    const diff = this.routeDifficultyFilter();
+    const km = this.routeMaxKmFilter();
+    if (diff) {
+      url += `&difficulty=${encodeURIComponent(diff)}`;
+    }
+    if (km) {
+      url += `&max_km=${encodeURIComponent(km)}`;
+    }
+
+    this.http.get<RouteData[]>(url).subscribe({
       next: (routes) => {
         if (this.currentUserId) {
           const token = this.authService.getToken();
