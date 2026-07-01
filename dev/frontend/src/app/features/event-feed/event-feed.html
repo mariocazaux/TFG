@@ -58,6 +58,7 @@
           <app-route-card
             [routeData]="route"
             [currentUserId]="currentUserId"
+            (bookmark)="bookmarkRoute($event)"
             (edit)="onEditRoute($event)"
             (delete)="requestDeleteRoute($event)"
           >

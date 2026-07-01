@@ -13,6 +13,7 @@ export interface RouteData {
   creator: { username: string; full_name: string; avatar_url: string };
   created_at: string;
   path_coords?: { coordinates: [number, number][] };
+  isBookmarked?: boolean;
 }
 
 @Component({
@@ -26,6 +27,7 @@ export class RouteCardComponent {
   routeData = input.required<RouteData>();
   currentUserId = input<string | null>(null);
 
+  bookmark = output<RouteData>();
   edit = output<RouteData>();
   delete = output<RouteData>();
 

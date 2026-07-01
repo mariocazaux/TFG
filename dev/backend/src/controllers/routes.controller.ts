@@ -209,3 +209,116 @@ export const deleteRoute = async (req: Request, res: Response) => {
     return res.status(500).json({ error: 'Error del servidor' });
   }
 };
+
+export const bookmarkRoute = async (req: Request, res: Response) => {
+  try {
+    const authHeader = req.headers.authorization;
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return res.status(401).json({ error: 'Falta el token de autorización' });
+    }
+    const token = authHeader.split(' ')[1];
+    const routeId = req.params.id;
+
+    const userSupabase = createClient(supabaseUrl, supabaseKey, {
+      global: { headers: { Authorization: `Bearer ${token}` } },
+    });
+
+    const { data: userData, error: userError } = await userSupabase.auth.getUser();
+    if (userError || !userData.user) {
+      return res.status(401).json({ error: 'Token inválido' });
+    }
+
+    const { error: insertError } = await userSupabase.from('route_bookmarks').insert({
+      route_id: routeId,
+      user_id: userData.user.id,
+    });
+
+    if (insertError) {
+      if (insertError.code === '23505') {
+        return res.status(400).json({ error: 'Ya tienes guardada esta ruta' });
+      }
+      console.error('Error guardando ruta:', insertError);
+      return res
+        .status(500)
+        .json({ error: 'Error al guardar la ruta', details: insertError.message });
+    }
+
+    return res.status(200).json({ message: 'Ruta guardada con éxito' });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: 'Error del servidor' });
+  }
+};
+
+export const unbookmarkRoute = async (req: Request, res: Response) => {
+  try {
+    const authHeader = req.headers.authorization;
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return res.status(401).json({ error: 'Falta el token de autorización' });
+    }
+    const token = authHeader.split(' ')[1];
+    const routeId = req.params.id;
+
+    const userSupabase = createClient(supabaseUrl, supabaseKey, {
+      global: { headers: { Authorization: `Bearer ${token}` } },
+    });
+
+    const { data: userData, error: userError } = await userSupabase.auth.getUser();
+    if (userError || !userData.user) {
+      return res.status(401).json({ error: 'Token inválido' });
+    }
+
+    const { error: deleteError } = await userSupabase
+      .from('route_bookmarks')
+      .delete()
+      .eq('route_id', routeId)
+      .eq('user_id', userData.user.id);
+
+    if (deleteError) {
+      console.error('Error quitando ruta guardada:', deleteError);
+      return res
+        .status(500)
+        .json({ error: 'Error al quitar ruta guardada', details: deleteError.message });
+    }
+
+    return res.status(200).json({ message: 'Ruta quitada de guardados con éxito' });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: 'Error del servidor' });
+  }
+};
+
+export const getMyBookmarks = async (req: Request, res: Response) => {
+  try {
+    const authHeader = req.headers.authorization;
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return res.status(401).json({ error: 'Falta el token de autorización' });
+    }
+    const token = authHeader.split(' ')[1];
+
+    const userSupabase = createClient(supabaseUrl, supabaseKey, {
+      global: { headers: { Authorization: `Bearer ${token}` } },
+    });
+
+    const { data: userData, error: userError } = await userSupabase.auth.getUser();
+    if (userError || !userData.user) {
+      return res.status(401).json({ error: 'Token inválido' });
+    }
+
+    const { data, error } = await userSupabase
+      .from('route_bookmarks')
+      .select('route_id')
+      .eq('user_id', userData.user.id);
+
+    if (error) {
+      console.error('Error obteniendo mis rutas guardadas:', error);
+      return res.status(500).json({ error: 'Error interno obteniendo rutas guardadas' });
+    }
+
+    const routeIds = data.map((item: any) => item.route_id);
+    return res.status(200).json(routeIds);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: 'Error del servidor' });
+  }
+};

@@ -20,14 +20,23 @@
     </div>
   </div>
 
-  @if (canEditOrDelete()) {
-    <div class="card-footer">
-      <app-button variant="secondary" [fullWidth]="true" (clicked)="edit.emit(routeData())">
-        Editar
-      </app-button>
-      <app-button variant="danger" [fullWidth]="true" (clicked)="delete.emit(routeData())">
-        Eliminar
-      </app-button>
-    </div>
-  }
+  <div class="card-footer">
+    @if (canEditOrDelete()) {
+      <div class="footer-actions">
+        <app-button variant="secondary" [fullWidth]="true" (clicked)="edit.emit(routeData())">
+          Editar
+        </app-button>
+        <app-button variant="danger" [fullWidth]="true" (clicked)="delete.emit(routeData())">
+          Eliminar
+        </app-button>
+      </div>
+    }
+    <app-button
+      [variant]="routeData().isBookmarked ? 'secondary' : 'primary'"
+      [fullWidth]="true"
+      (clicked)="bookmark.emit(routeData())"
+    >
+      {{ routeData().isBookmarked ? 'Guardado' : 'Guardar Ruta' }}
+    </app-button>
+  </div>
 </div>

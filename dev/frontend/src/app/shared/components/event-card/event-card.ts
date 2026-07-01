@@ -12,6 +12,7 @@ export interface EventData {
   organizer_id: string;
   organizer: { username: string; full_name: string; avatar_url: string };
   location_coords: { coordinates: [number, number] };
+  isAttending?: boolean;
 }
 
 @Component({

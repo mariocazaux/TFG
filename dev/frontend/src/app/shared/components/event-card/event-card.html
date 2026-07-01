@@ -33,12 +33,12 @@
       </div>
     }
     <app-button
-      variant="primary"
+      [variant]="event().isAttending ? 'secondary' : 'primary'"
       [fullWidth]="true"
-      [disabled]="isFull()"
+      [disabled]="isFull() && !event().isAttending"
       (clicked)="attend.emit(event())"
     >
-      {{ isFull() ? 'Aforo Completo' : 'Asistir' }}
+      {{ event().isAttending ? 'Desapuntarse' : isFull() ? 'Aforo Completo' : 'Asistir' }}
     </app-button>
   </div>
 </div>

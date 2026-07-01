@@ -51,8 +51,23 @@ export class EventFeedComponent implements OnInit {
 
   loadEvents() {
     this.http.get<EventData[]>(`${environment.apiUrl}/events?_t=${Date.now()}`).subscribe({
-      next: (data) => {
-        this.events.set(data);
+      next: (events) => {
+        if (this.currentUserId) {
+          const token = this.authService.getToken();
+          const headers = { Authorization: `Bearer ${token}` };
+          this.http
+            .get<string[]>(`${environment.apiUrl}/events/my-attendances`, { headers })
+            .subscribe({
+              next: (attendances) => {
+                const attendedSet = new Set(attendances);
+                events.forEach((e) => (e.isAttending = attendedSet.has(e.id)));
+                this.events.set(events);
+              },
+              error: () => this.events.set(events),
+            });
+        } else {
+          this.events.set(events);
+        }
       },
       error: () => {
         this.errorMessage.set('Error al cargar los eventos próximos.');
@@ -62,8 +77,23 @@ export class EventFeedComponent implements OnInit {
 
   loadRoutes() {
     this.http.get<RouteData[]>(`${environment.apiUrl}/routes?_t=${Date.now()}`).subscribe({
-      next: (data) => {
-        this.routes.set(data);
+      next: (routes) => {
+        if (this.currentUserId) {
+          const token = this.authService.getToken();
+          const headers = { Authorization: `Bearer ${token}` };
+          this.http
+            .get<string[]>(`${environment.apiUrl}/routes/my-bookmarks`, { headers })
+            .subscribe({
+              next: (bookmarks) => {
+                const bookmarkSet = new Set(bookmarks);
+                routes.forEach((r) => (r.isBookmarked = bookmarkSet.has(r.id)));
+                this.routes.set(routes);
+              },
+              error: () => this.routes.set(routes),
+            });
+        } else {
+          this.routes.set(routes);
+        }
       },
       error: () => {
         this.errorMessage.set('Error al cargar las rutas.');
@@ -72,32 +102,108 @@ export class EventFeedComponent implements OnInit {
   }
 
   attendEvent(event: EventData) {
-    const attendees = event.attendees?.[0]?.count || 0;
-    if (event.max_attendees && attendees >= event.max_attendees) {
-      alert('El aforo para este evento está completo.');
+    if (!this.currentUserId) {
+      alert('Debes iniciar sesión para apuntarte.');
       return;
     }
 
     const token = this.authService.getToken();
     const headers = { Authorization: `Bearer ${token}` };
 
-    this.http.post(`${environment.apiUrl}/events/${event.id}/attend`, {}, { headers }).subscribe({
-      next: () => {
-        alert('¡Te has apuntado al evento correctamente!');
-        this.loadEvents();
-      },
-      error: (err) => {
-        alert(err.error?.error || 'Hubo un problema al intentar apuntarte al evento.');
-      },
-    });
+    if (event.isAttending) {
+      // Unattend
+      this.http.delete(`${environment.apiUrl}/events/${event.id}/attend`, { headers }).subscribe({
+        next: () => {
+          this.events.update((events) =>
+            events.map((e) => {
+              if (e.id === event.id) {
+                return {
+                  ...e,
+                  isAttending: false,
+                  attendees: [{ count: Math.max(0, (e.attendees?.[0]?.count || 0) - 1) }],
+                };
+              }
+              return e;
+            }),
+          );
+        },
+        error: (err) => {
+          alert(err.error?.error || 'Hubo un problema al cancelar asistencia.');
+        },
+      });
+    } else {
+      // Attend
+      const attendees = event.attendees?.[0]?.count || 0;
+      if (event.max_attendees && attendees >= event.max_attendees) {
+        alert('El aforo para este evento está completo.');
+        return;
+      }
+      this.http.post(`${environment.apiUrl}/events/${event.id}/attend`, {}, { headers }).subscribe({
+        next: () => {
+          this.events.update((events) =>
+            events.map((e) => {
+              if (e.id === event.id) {
+                return {
+                  ...e,
+                  isAttending: true,
+                  attendees: [{ count: (e.attendees?.[0]?.count || 0) + 1 }],
+                };
+              }
+              return e;
+            }),
+          );
+        },
+        error: (err) => {
+          alert(err.error?.error || 'Hubo un problema al intentar apuntarte al evento.');
+        },
+      });
+    }
+  }
+
+  bookmarkRoute(route: RouteData) {
+    if (!this.currentUserId) {
+      alert('Debes iniciar sesión para guardar.');
+      return;
+    }
+
+    const token = this.authService.getToken();
+    const headers = { Authorization: `Bearer ${token}` };
+
+    if (route.isBookmarked) {
+      // Unbookmark
+      this.http.delete(`${environment.apiUrl}/routes/${route.id}/bookmark`, { headers }).subscribe({
+        next: () => {
+          this.routes.update((routes) =>
+            routes.map((r) => (r.id === route.id ? { ...r, isBookmarked: false } : r)),
+          );
+        },
+        error: (err) => {
+          alert(err.error?.error || 'Hubo un problema al quitar de guardados.');
+        },
+      });
+    } else {
+      // Bookmark
+      this.http
+        .post(`${environment.apiUrl}/routes/${route.id}/bookmark`, {}, { headers })
+        .subscribe({
+          next: () => {
+            this.routes.update((routes) =>
+              routes.map((r) => (r.id === route.id ? { ...r, isBookmarked: true } : r)),
+            );
+          },
+          error: (err) => {
+            alert(err.error?.error || 'Hubo un problema al guardar ruta.');
+          },
+        });
+    }
   }
 
   onEditEvent(event: EventData) {
-    this.router.navigate(['/app/edit-event', event.id]);
+    this.router.navigate(['/app/create-event', event.id]);
   }
 
   onEditRoute(route: RouteData) {
-    this.router.navigate(['/app/edit-route', route.id]);
+    this.router.navigate(['/app/create-route', route.id]);
   }
 
   requestDeleteEvent(event: EventData) {

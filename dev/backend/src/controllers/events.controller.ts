@@ -276,3 +276,76 @@ export const deleteEvent = async (req: Request, res: Response) => {
     return res.status(500).json({ error: 'Error del servidor' });
   }
 };
+
+export const unattendEvent = async (req: Request, res: Response) => {
+  try {
+    const authHeader = req.headers.authorization;
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return res.status(401).json({ error: 'Falta el token de autorización' });
+    }
+    const token = authHeader.split(' ')[1];
+    const eventId = req.params.id;
+
+    const userSupabase = createClient(supabaseUrl, supabaseKey, {
+      global: { headers: { Authorization: `Bearer ${token}` } },
+    });
+
+    const { data: userData, error: userError } = await userSupabase.auth.getUser();
+    if (userError || !userData.user) {
+      return res.status(401).json({ error: 'Token inválido' });
+    }
+
+    const { error: deleteError } = await userSupabase
+      .from('event_attendees')
+      .delete()
+      .eq('event_id', eventId)
+      .eq('user_id', userData.user.id);
+
+    if (deleteError) {
+      console.error('Error borrando asistencia:', deleteError);
+      return res
+        .status(500)
+        .json({ error: 'Error cancelando tu asistencia', details: deleteError.message });
+    }
+
+    return res.status(200).json({ message: 'Asistencia cancelada con éxito' });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: 'Error del servidor' });
+  }
+};
+
+export const getMyAttendances = async (req: Request, res: Response) => {
+  try {
+    const authHeader = req.headers.authorization;
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return res.status(401).json({ error: 'Falta el token de autorización' });
+    }
+    const token = authHeader.split(' ')[1];
+
+    const userSupabase = createClient(supabaseUrl, supabaseKey, {
+      global: { headers: { Authorization: `Bearer ${token}` } },
+    });
+
+    const { data: userData, error: userError } = await userSupabase.auth.getUser();
+    if (userError || !userData.user) {
+      return res.status(401).json({ error: 'Token inválido' });
+    }
+
+    const { data, error } = await userSupabase
+      .from('event_attendees')
+      .select('event_id')
+      .eq('user_id', userData.user.id);
+
+    if (error) {
+      console.error('Error obteniendo mis asistencias:', error);
+      return res.status(500).json({ error: 'Error interno obteniendo asistencias' });
+    }
+
+    const eventIds = data.map((item: any) => item.event_id);
+    return res.status(200).json(eventIds);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: 'Error del servidor' });
+  }
+};

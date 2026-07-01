@@ -48,12 +48,12 @@ export const routes: Routes = [
           import('./features/create-event/create-event').then((m) => m.CreateEventComponent),
       },
       {
-        path: 'edit-event/:id',
+        path: 'create-event/:id',
         loadComponent: () =>
           import('./features/create-event/create-event').then((m) => m.CreateEventComponent),
       },
       {
-        path: 'edit-route/:id',
+        path: 'create-route/:id',
         loadComponent: () =>
           import('./features/create-route/create-route').then((m) => m.CreateRouteComponent),
       },

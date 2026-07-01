@@ -5,13 +5,19 @@ import {
   getRouteById,
   updateRoute,
   deleteRoute,
+  bookmarkRoute,
+  unbookmarkRoute,
+  getMyBookmarks,
 } from '../controllers/routes.controller.ts';
 
 const router = Router();
 
 router.post('/', createRoute);
 router.get('/', getAllRoutes);
+router.get('/my-bookmarks', getMyBookmarks);
 router.get('/:id', getRouteById);
+router.post('/:id/bookmark', bookmarkRoute);
+router.delete('/:id/bookmark', unbookmarkRoute);
 router.put('/:id', updateRoute);
 router.delete('/:id', deleteRoute);
 
