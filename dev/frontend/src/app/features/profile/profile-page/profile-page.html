@@ -39,29 +39,89 @@
     </div>
   </div>
 
-  <section class="profile__garage">
-    <div class="profile__garage-header">
-      <h2 class="profile__garage-title">Mi Garaje</h2>
-      <button class="button button--cyan button--small" (click)="openAddModal()">+ Añadir</button>
-    </div>
+  <div class="profile__tabs">
+    <button class="tab-btn" [class.active]="activeTab() === 'garage'" (click)="setTab('garage')">
+      Mi Garaje
+    </button>
+    <button class="tab-btn" [class.active]="activeTab() === 'events'" (click)="setTab('events')">
+      Mis Quedadas
+    </button>
+    <button class="tab-btn" [class.active]="activeTab() === 'routes'" (click)="setTab('routes')">
+      Mis Rutas
+    </button>
+  </div>
 
-    <div class="profile__garage-grid">
-      @for (vehicle of vehicles(); track vehicle.id) {
-        <app-vehicle-card
-          [vehicle]="vehicle"
-          (edit)="onEditVehicle($event)"
-          (delete)="onDeleteVehicle($event)"
-        ></app-vehicle-card>
-      } @empty {
-        <div class="profile__garage-empty">
-          <p>No tienes vehículos en tu garaje.</p>
-          <button class="button button--secondary" (click)="openAddModal()">
-            Añadir tu primer vehículo
-          </button>
-        </div>
-      }
-    </div>
-  </section>
+  @if (activeTab() === 'garage') {
+    <section class="profile__garage">
+      <div class="profile__garage-header">
+        <h2 class="profile__garage-title">Mi Garaje</h2>
+        <app-button variant="primary" (click)="openAddModal()">+ Añadir</app-button>
+      </div>
+
+      <div class="profile__garage-grid">
+        @for (vehicle of vehicles(); track vehicle.id) {
+          <app-vehicle-card
+            [vehicle]="vehicle"
+            (edit)="onEditVehicle($event)"
+            (delete)="onDeleteVehicle($event)"
+          ></app-vehicle-card>
+        } @empty {
+          <div class="profile__garage-empty">
+            <p>No tienes vehículos en tu garaje.</p>
+            <app-button variant="secondary" (click)="openAddModal()">
+              Añadir tu primer vehículo
+            </app-button>
+          </div>
+        }
+      </div>
+    </section>
+  }
+
+  @if (activeTab() === 'events') {
+    <section class="profile__garage">
+      <div class="profile__garage-header">
+        <h2 class="profile__garage-title">Mis Quedadas</h2>
+      </div>
+
+      <div class="profile__garage-grid">
+        @for (event of attendedEvents(); track event.id) {
+          <app-event-card
+            [event]="event"
+            [currentUserId]="currentUserId"
+            (attend)="unattendEvent($event)"
+          ></app-event-card>
+        } @empty {
+          <div class="profile__garage-empty">
+            <p>No estás apuntado a ninguna quedada.</p>
+            <app-button variant="primary" routerLink="/app/events">Explorar Quedadas</app-button>
+          </div>
+        }
+      </div>
+    </section>
+  }
+
+  @if (activeTab() === 'routes') {
+    <section class="profile__garage">
+      <div class="profile__garage-header">
+        <h2 class="profile__garage-title">Mis Rutas Guardadas</h2>
+      </div>
+
+      <div class="profile__garage-grid">
+        @for (route of bookmarkedRoutes(); track route.id) {
+          <app-route-card
+            [routeData]="route"
+            [currentUserId]="currentUserId"
+            (bookmark)="unbookmarkRoute($event)"
+          ></app-route-card>
+        } @empty {
+          <div class="profile__garage-empty">
+            <p>No tienes rutas guardadas.</p>
+            <app-button variant="primary" routerLink="/app/events">Explorar Rutas</app-button>
+          </div>
+        }
+      </div>
+    </section>
+  }
 
   @if (isAddModalOpen()) {
     <app-add-vehicle

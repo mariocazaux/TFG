@@ -8,6 +8,7 @@ import {
   bookmarkRoute,
   unbookmarkRoute,
   getMyBookmarks,
+  getMyBookmarkedRoutes,
 } from '../controllers/routes.controller.ts';
 
 const router = Router();
@@ -15,6 +16,7 @@ const router = Router();
 router.post('/', createRoute);
 router.get('/', getAllRoutes);
 router.get('/my-bookmarks', getMyBookmarks);
+router.get('/my-bookmarked-routes', getMyBookmarkedRoutes);
 router.get('/:id', getRouteById);
 router.post('/:id/bookmark', bookmarkRoute);
 router.delete('/:id/bookmark', unbookmarkRoute);

@@ -349,3 +349,49 @@ export const getMyAttendances = async (req: Request, res: Response) => {
     return res.status(500).json({ error: 'Error del servidor' });
   }
 };
+
+export const getMyAttendedEvents = async (req: Request, res: Response) => {
+  try {
+    const authHeader = req.headers.authorization;
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return res.status(401).json({ error: 'Falta el token de autorización' });
+    }
+    const token = authHeader.split(' ')[1];
+
+    const userSupabase = createClient(supabaseUrl, supabaseKey, {
+      global: { headers: { Authorization: `Bearer ${token}` } },
+    });
+
+    const { data: userData, error: userError } = await userSupabase.auth.getUser();
+    if (userError || !userData.user) {
+      return res.status(401).json({ error: 'Token inválido' });
+    }
+
+    const { data, error } = await userSupabase
+      .from('event_attendees')
+      .select(
+        'events(*, organizer:profiles!events_organizer_id_fkey(username, avatar_url, full_name), attendees:event_attendees(count))',
+      )
+      .eq('user_id', userData.user.id)
+      .order('created_at', { ascending: false });
+
+    if (error) {
+      console.error('Error obteniendo mis eventos:', error);
+      return res.status(500).json({ error: 'Error interno obteniendo eventos' });
+    }
+
+    const events = data.map((item: any) => {
+      const e = item.events;
+      return {
+        ...e,
+        organizer: Array.isArray(e.organizer) ? e.organizer[0] : e.organizer,
+        attendeesCount: e.attendees?.[0]?.count || 0,
+      };
+    });
+
+    return res.status(200).json(events);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: 'Error del servidor' });
+  }
+};

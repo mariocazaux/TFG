@@ -322,3 +322,46 @@ export const getMyBookmarks = async (req: Request, res: Response) => {
     return res.status(500).json({ error: 'Error del servidor' });
   }
 };
+
+export const getMyBookmarkedRoutes = async (req: Request, res: Response) => {
+  try {
+    const authHeader = req.headers.authorization;
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return res.status(401).json({ error: 'Falta el token de autorización' });
+    }
+    const token = authHeader.split(' ')[1];
+
+    const userSupabase = createClient(supabaseUrl, supabaseKey, {
+      global: { headers: { Authorization: `Bearer ${token}` } },
+    });
+
+    const { data: userData, error: userError } = await userSupabase.auth.getUser();
+    if (userError || !userData.user) {
+      return res.status(401).json({ error: 'Token inválido' });
+    }
+
+    const { data, error } = await userSupabase
+      .from('route_bookmarks')
+      .select('routes(*, creator:profiles!routes_creator_id_fkey(username, avatar_url, full_name))')
+      .eq('user_id', userData.user.id)
+      .order('created_at', { ascending: false });
+
+    if (error) {
+      console.error('Error obteniendo mis rutas completas guardadas:', error);
+      return res.status(500).json({ error: 'Error interno obteniendo rutas guardadas' });
+    }
+
+    const routes = data.map((item: any) => {
+      const r = item.routes;
+      return {
+        ...r,
+        creator: Array.isArray(r.creator) ? r.creator[0] : r.creator,
+      };
+    });
+
+    return res.status(200).json(routes);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: 'Error del servidor' });
+  }
+};

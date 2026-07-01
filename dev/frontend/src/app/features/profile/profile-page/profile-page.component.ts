@@ -1,5 +1,6 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router';
 import { VehicleCardComponent } from '../components/vehicle-card/vehicle-card.component';
 import { AddVehicleComponent } from '../components/add-vehicle/add-vehicle.component';
 import { ConfirmModalComponent } from '../../../shared/components/confirm-modal/confirm-modal.component';
@@ -8,11 +9,23 @@ import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../../environments/environment';
 import { Vehicle, BackendVehicle } from '../../../core/models/domain.models';
 import { createClient } from '@supabase/supabase-js';
+import { EventData, EventCardComponent } from '../../../shared/components/event-card/event-card';
+import { RouteData, RouteCardComponent } from '../../../shared/components/route-card/route-card';
+import { ButtonComponent } from '../../../shared/components/button/button';
 
 @Component({
   selector: 'app-profile-page',
   standalone: true,
-  imports: [CommonModule, VehicleCardComponent, AddVehicleComponent, ConfirmModalComponent],
+  imports: [
+    CommonModule,
+    VehicleCardComponent,
+    AddVehicleComponent,
+    ConfirmModalComponent,
+    EventCardComponent,
+    RouteCardComponent,
+    ButtonComponent,
+    RouterModule,
+  ],
   templateUrl: './profile-page.html',
   styleUrls: ['./profile-page.scss'],
 })
@@ -28,12 +41,61 @@ export class ProfilePageComponent implements OnInit {
   isAddModalOpen = signal<boolean>(false);
   vehicleToEdit = signal<Vehicle | undefined>(undefined);
 
+  activeTab = signal<'garage' | 'events' | 'routes'>('garage');
+  attendedEvents = signal<EventData[]>([]);
+  bookmarkedRoutes = signal<RouteData[]>([]);
+
   // Estado para el modal de confirmación de eliminación
   vehicleToDelete = signal<Vehicle | undefined>(undefined);
+  currentUserId = this.authService.getUserId() || '';
 
   ngOnInit() {
     this.userName.set(this.authService.getUsername());
     this.loadVehicles();
+    this.loadMyAttendedEvents();
+    this.loadMyBookmarkedRoutes();
+  }
+
+  setTab(tab: 'garage' | 'events' | 'routes') {
+    this.activeTab.set(tab);
+  }
+
+  loadMyAttendedEvents() {
+    this.http.get<EventData[]>(`${environment.apiUrl}/events/my-attended-events`).subscribe({
+      next: (events) => {
+        const mapped = events.map((e) => ({ ...e, isAttending: true }));
+        this.attendedEvents.set(mapped);
+      },
+      error: (err) => console.error('Error loading attended events:', err),
+    });
+  }
+
+  loadMyBookmarkedRoutes() {
+    this.http.get<RouteData[]>(`${environment.apiUrl}/routes/my-bookmarked-routes`).subscribe({
+      next: (routes) => {
+        const mapped = routes.map((r) => ({ ...r, isBookmarked: true }));
+        this.bookmarkedRoutes.set(mapped);
+      },
+      error: (err) => console.error('Error loading bookmarked routes:', err),
+    });
+  }
+
+  unattendEvent(event: EventData) {
+    this.http.delete(`${environment.apiUrl}/events/${event.id}/attend`).subscribe({
+      next: () => {
+        this.attendedEvents.update((events) => events.filter((e) => e.id !== event.id));
+      },
+      error: (err) => console.error('Error al desapuntarse:', err),
+    });
+  }
+
+  unbookmarkRoute(route: RouteData) {
+    this.http.delete(`${environment.apiUrl}/routes/${route.id}/bookmark`).subscribe({
+      next: () => {
+        this.bookmarkedRoutes.update((routes) => routes.filter((r) => r.id !== route.id));
+      },
+      error: (err) => console.error('Error al quitar ruta guardada:', err),
+    });
   }
 
   loadVehicles() {
