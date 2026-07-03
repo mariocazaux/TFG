@@ -2,22 +2,22 @@
 @use '../../../../styles/settings/settings.spacing' as space;
 
 .search-page-container {
-  padding: space.$spacing-8;
+  padding: space.$spacing-xl;
   max-width: 1200px;
   margin: 0 auto;
 
   .search-header {
-    margin-bottom: space.$spacing-8;
+    margin-bottom: space.$spacing-xl;
 
     h2 {
       font-size: 2rem;
-      margin-bottom: space.$spacing-6;
+      margin-bottom: space.$spacing-lg;
       color: colors.$color-text-primary;
     }
 
     .search-bar {
       display: flex;
-      gap: space.$spacing-4;
+      gap: space.$spacing-md;
       align-items: center;
 
       .form-group__input {
@@ -38,12 +38,11 @@
     }
   }
 
-  .status-msg,
-  .empty-state {
-    padding: space.$spacing-8;
+  .status-msg, .empty-state {
+    padding: space.$spacing-xl;
     text-align: center;
     color: colors.$color-text-secondary;
-    background-color: rgb(3 7 18 / 50%);
+    background-color: rgba(3, 7, 18, 0.5);
     border: 1px solid colors.$color-gray-800;
     border-radius: 1rem;
   }
@@ -51,23 +50,23 @@
   .users-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-    gap: space.$spacing-6;
+    gap: space.$spacing-lg;
 
     .user-card {
-      background-color: rgb(3 7 18 / 50%);
+      background-color: rgba(3, 7, 18, 0.5);
       border: 1px solid colors.$color-gray-800;
       border-radius: 1rem;
-      padding: space.$spacing-6;
+      padding: space.$spacing-lg;
       display: flex;
       align-items: center;
-      gap: space.$spacing-4;
+      gap: space.$spacing-md;
       cursor: pointer;
       transition: all 0.2s ease;
 
       &:hover {
         transform: translateY(-2px);
         border-color: colors.$color-cyan-500;
-        box-shadow: 0 4px 20px rgb(0 229 255 / 10%);
+        box-shadow: 0 4px 20px rgba(0, 229, 255, 0.1);
       }
 
       &__avatar {
@@ -87,7 +86,7 @@
         font-size: 1.1rem;
         font-weight: 600;
         color: colors.$color-text-primary;
-        margin: 0 0 0.25rem;
+        margin: 0 0 0.25rem 0;
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;

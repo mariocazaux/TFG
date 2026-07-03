@@ -2,8 +2,8 @@ import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
-import { environment } from '../../../../environments/environment';
-import { ButtonComponent } from '../../../shared/components/button/button';
+import { environment } from '../../../../../environments/environment';
+import { ButtonComponent } from '../../../../shared/components/button/button';
 
 interface PublicProfile {
   id: string;
@@ -54,43 +54,37 @@ export class PublicProfileComponent implements OnInit {
         console.error('Error cargando perfil:', err);
         this.errorMsg.set('No se ha podido cargar el perfil');
         this.isLoading.set(false);
-      },
+      }
     });
   }
 
   toggleFollow() {
     const currentProfile = this.profile();
-    if (!currentProfile || this.isTogglingFollow()) {
-      return;
-    }
+    if (!currentProfile || this.isTogglingFollow()) return;
 
     this.isTogglingFollow.set(true);
 
     if (currentProfile.isFollowing) {
       this.http.delete(`${environment.apiUrl}/users/${currentProfile.id}/follow`).subscribe({
         next: () => {
-          this.profile.update((p) =>
-            p ? { ...p, isFollowing: false, followersCount: p.followersCount - 1 } : p,
-          );
+          this.profile.update(p => p ? { ...p, isFollowing: false, followersCount: p.followersCount - 1 } : p);
           this.isTogglingFollow.set(false);
         },
         error: (err) => {
           console.error(err);
           this.isTogglingFollow.set(false);
-        },
+        }
       });
     } else {
       this.http.post(`${environment.apiUrl}/users/${currentProfile.id}/follow`, {}).subscribe({
         next: () => {
-          this.profile.update((p) =>
-            p ? { ...p, isFollowing: true, followersCount: p.followersCount + 1 } : p,
-          );
+          this.profile.update(p => p ? { ...p, isFollowing: true, followersCount: p.followersCount + 1 } : p);
           this.isTogglingFollow.set(false);
         },
         error: (err) => {
           console.error(err);
           this.isTogglingFollow.set(false);
-        },
+        }
       });
     }
   }
