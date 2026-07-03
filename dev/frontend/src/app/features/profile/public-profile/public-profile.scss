@@ -1,0 +1,104 @@
+@use '../../../../styles/settings/settings.colors' as colors;
+@use '../../../../styles/settings/settings.spacing' as space;
+
+:host {
+  display: block;
+  padding: space.$spacing-xl;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.loading-state,
+.error-state {
+  text-align: center;
+  padding: space.$spacing-xl;
+  color: colors.$color-text-secondary;
+}
+
+.profile-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: space.$spacing-xl;
+
+  &__main {
+    display: flex;
+    gap: space.$spacing-xl;
+    align-items: center;
+  }
+}
+
+.profile-avatar-container {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 3px solid colors.$color-cyan-500;
+  flex-shrink: 0;
+
+  .profile-avatar {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+}
+
+.profile-info {
+  .profile-name {
+    font-size: 2rem;
+    font-weight: 700;
+    color: colors.$color-text-primary;
+    margin: 0 0 space.$spacing-xs 0;
+  }
+
+  .profile-fullname {
+    font-size: 1.1rem;
+    color: colors.$color-text-secondary;
+    margin: 0 0 space.$spacing-sm 0;
+  }
+
+  .profile-bio {
+    color: colors.$color-text-secondary;
+    margin: 0;
+    line-height: 1.5;
+  }
+}
+
+.profile-stats {
+  display: flex;
+  gap: space.$spacing-xl;
+  margin-bottom: space.$spacing-xl;
+  padding: space.$spacing-md 0;
+  border-top: 1px solid colors.$color-gray-800;
+  border-bottom: 1px solid colors.$color-gray-800;
+
+  .stat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    &__value {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: colors.$color-cyan-500;
+    }
+
+    &__label {
+      font-size: 0.875rem;
+      color: colors.$color-text-secondary;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+  }
+}
+
+.profile-content {
+  .empty-state {
+    text-align: center;
+    padding: space.$spacing-xl;
+    background-color: rgb(3 7 18 / 50%);
+    border: 1px solid colors.$color-gray-800;
+    border-radius: 1rem;
+    color: colors.$color-text-secondary;
+  }
+}

@@ -58,6 +58,20 @@ export const routes: Routes = [
           import('./features/create-route/create-route').then((m) => m.CreateRouteComponent),
       },
       {
+        path: 'search',
+        loadComponent: () =>
+          import('./features/search/search-page/search-page.component').then(
+            (m) => m.SearchPageComponent,
+          ),
+      },
+      {
+        path: 'user/:id',
+        loadComponent: () =>
+          import('./features/profile/public-profile/public-profile.component').then(
+            (m) => m.PublicProfileComponent,
+          ),
+      },
+      {
         path: '',
         redirectTo: 'profile',
         pathMatch: 'full',

@@ -1,0 +1,60 @@
+<div class="search-page-container">
+  <div class="search-header">
+    <h2>Buscar Usuarios</h2>
+    <div class="search-bar">
+      <input
+        type="text"
+        placeholder="Nombre de usuario..."
+        (input)="onSearchInput($event)"
+        (keydown.enter)="onSearch()"
+        class="form-group__input"
+      />
+      <button class="button button--primary" (click)="onSearch()">
+        <svg
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          class="search-icon"
+        >
+          <circle cx="11" cy="11" r="8"></circle>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+        Buscar
+      </button>
+    </div>
+  </div>
+
+  <div class="search-results">
+    @if (isSearching()) {
+      <div class="status-msg">
+        <p>Buscando...</p>
+      </div>
+    } @else if (hasSearched() && searchResults().length === 0) {
+      <div class="empty-state">
+        <p>No se encontraron usuarios con ese nombre.</p>
+      </div>
+    } @else {
+      <div class="users-grid">
+        @for (user of searchResults(); track user.id) {
+          <div class="user-card" [routerLink]="['/app/user', user.id]">
+            <img
+              [src]="
+                user.avatar_url ||
+                'https://st4.depositphotos.com/12613638/38132/v/450/depositphotos_381327364-stock-illustration-vector-icon-eps-flat-design.jpg'
+              "
+              alt="Avatar de {{ user.username }}"
+              class="user-card__avatar"
+            />
+            <div class="user-card__info">
+              <h3 class="user-card__username">{{ user.username }}</h3>
+              @if (user.full_name) {
+                <p class="user-card__fullname">{{ user.full_name }}</p>
+              }
+            </div>
+          </div>
+        }
+      </div>
+    }
+  </div>
+</div>

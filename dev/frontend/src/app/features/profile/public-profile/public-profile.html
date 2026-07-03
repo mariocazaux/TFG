@@ -1,0 +1,54 @@
+@if (isLoading()) {
+  <div class="loading-state">
+    <p>Cargando perfil...</p>
+  </div>
+} @else if (errorMsg()) {
+  <div class="error-state">
+    <p>{{ errorMsg() }}</p>
+  </div>
+} @else if (profile()) {
+  <div class="profile-header">
+    <div class="profile-header__main">
+      <div class="profile-avatar-container">
+        <img
+          [src]="
+            profile()?.avatar_url ||
+            'https://st4.depositphotos.com/12613638/38132/v/450/depositphotos_381327364-stock-illustration-vector-icon-eps-flat-design.jpg'
+          "
+          alt="Avatar"
+          class="profile-avatar"
+        />
+      </div>
+      <div class="profile-info">
+        <h1 class="profile-name">{{ profile()?.username }}</h1>
+        @if (profile()?.full_name) {
+          <p class="profile-fullname">{{ profile()?.full_name }}</p>
+        }
+        <p class="profile-bio">{{ profile()?.bio || 'Sin biografía' }}</p>
+      </div>
+    </div>
+
+    <div class="profile-actions">
+      <app-button
+        [variant]="profile()?.isFollowing ? 'secondary' : 'primary'"
+        [disabled]="isTogglingFollow()"
+        (click)="toggleFollow()"
+      >
+        {{ profile()?.isFollowing ? 'Siguiendo' : 'Seguir' }}
+      </app-button>
+    </div>
+  </div>
+
+  <div class="profile-stats">
+    <div class="stat">
+      <span class="stat__value">{{ profile()?.followersCount }}</span>
+      <span class="stat__label">Seguidores</span>
+    </div>
+  </div>
+
+  <div class="profile-content">
+    <div class="empty-state">
+      <p>Vehículos y rutas públicas próximamente...</p>
+    </div>
+  </div>
+}
