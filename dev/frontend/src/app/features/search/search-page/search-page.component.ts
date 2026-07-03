@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../../environments/environment';
+import { ButtonComponent } from '../../../shared/components/button/button';
 
 interface UserSearchResult {
   id: string;
@@ -14,7 +15,7 @@ interface UserSearchResult {
 @Component({
   selector: 'app-search-page',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, ButtonComponent],
   templateUrl: './search-page.html',
   styleUrls: ['./search-page.scss'],
 })

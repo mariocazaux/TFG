@@ -1,5 +1,6 @@
 @use '../../../../styles/settings/settings.colors' as colors;
 @use '../../../../styles/settings/settings.spacing' as space;
+@use '../../../../styles/tools/tools.mixins' as mixins;
 
 .search-page-container {
   padding: space.$spacing-8;
@@ -10,9 +11,11 @@
     margin-bottom: space.$spacing-8;
 
     h2 {
-      font-size: 2rem;
+      font-size: 2.5rem;
+      font-weight: 700;
       margin-bottom: space.$spacing-6;
-      color: colors.$color-text-primary;
+
+      @include mixins.gradient-text(colors.$color-cyan-400, colors.$color-purple-500);
     }
 
     .search-bar {
@@ -20,9 +23,29 @@
       gap: space.$spacing-4;
       align-items: center;
 
-      .form-group__input {
+      .search-input {
         flex: 1;
         max-width: 500px;
+        padding: space.$spacing-4 space.$spacing-5;
+        border: 1px solid colors.$color-gray-700;
+        border-radius: 0.75rem;
+        background-color: rgb(3 7 18 / 70%);
+        color: colors.$color-text-primary;
+        font-family: inherit;
+        font-size: 1rem;
+        transition:
+          border-color 0.2s ease,
+          box-shadow 0.2s ease;
+
+        &:focus {
+          outline: none;
+          border-color: colors.$color-cyan-500;
+          box-shadow: 0 0 10px rgb(0 229 255 / 20%);
+        }
+
+        &::placeholder {
+          color: colors.$color-text-secondary;
+        }
       }
 
       .button {
