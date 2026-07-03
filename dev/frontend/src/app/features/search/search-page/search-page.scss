@@ -73,40 +73,47 @@
 
   .users-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
     gap: space.$spacing-6;
 
     .user-card {
       background-color: rgb(3 7 18 / 50%);
       border: 1px solid colors.$color-gray-800;
       border-radius: 1rem;
-      padding: space.$spacing-6;
-      display: flex;
-      align-items: center;
-      gap: space.$spacing-4;
+      padding: 1.5rem;
       cursor: pointer;
-      transition: all 0.2s ease;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+      transition: all 0.3s ease;
 
       &:hover {
-        transform: translateY(-2px);
+        transform: translateY(-4px);
         border-color: colors.$color-cyan-500;
-        box-shadow: 0 4px 20px rgb(0 229 255 / 10%);
+        box-shadow: 0 10px 25px -5px rgb(0 229 255 / 20%);
+      }
+
+      &__header {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        min-width: 0;
       }
 
       &__avatar {
-        width: 3.5rem;
-        height: 3.5rem;
+        width: 4rem;
+        height: 4rem;
         border-radius: 50%;
         object-fit: cover;
         border: 2px solid colors.$color-gray-800;
+        flex-shrink: 0;
       }
 
       &__info {
-        flex: 1;
-        min-width: 0; // Para el truncado de texto
+        min-width: 0;
       }
 
-      &__username {
+      &__title {
         font-size: 1.1rem;
         font-weight: 600;
         color: colors.$color-text-primary;
@@ -116,13 +123,18 @@
         text-overflow: ellipsis;
       }
 
-      &__fullname {
+      &__subtitle {
         font-size: 0.875rem;
         color: colors.$color-text-secondary;
         margin: 0;
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
+      }
+
+      &__actions {
+        width: 100%;
+        margin-top: auto;
       }
     }
   }

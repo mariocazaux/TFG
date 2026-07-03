@@ -2,7 +2,7 @@ import type { Request, Response } from 'express';
 import { createClient } from '@supabase/supabase-js';
 
 const supabaseUrl = process.env['SUPABASE_URL'] || '';
-const supabaseKey = process.env['SUPABASE_SERVICE_ROLE_KEY'] || '';
+const supabaseKey = process.env['SUPABASE_SERVICE_ROLE_KEY'] || process.env['SUPABASE_KEY'] || '';
 
 const getUserIdFromToken = (req: Request): string | null => {
   const authHeader = req.headers.authorization;
@@ -149,13 +149,65 @@ export const getPublicProfile = async (req: Request, res: Response) => {
       .select('*', { count: 'exact', head: true })
       .eq('following_id', requestedUserId);
 
+    // Get user routes
+    const { data: userRoutes } = await supabase
+      .from('routes')
+      .select(`*, creator:profiles!routes_creator_id_fkey(username, avatar_url, full_name)`)
+      .eq('creator_id', requestedUserId)
+      .order('created_at', { ascending: false });
+
+    // Get user events
+    const { data: userEvents } = await supabase
+      .from('events')
+      .select(`*, creator:profiles!events_creator_id_fkey(username, avatar_url, full_name)`)
+      .eq('creator_id', requestedUserId)
+      .order('date', { ascending: true });
+
     return res.status(200).json({
       ...profile,
       isFollowing,
       followersCount: followersCount || 0,
+      routes: userRoutes || [],
+      events: userEvents || [],
     });
   } catch (error) {
     console.error(error);
     return res.status(500).json({ error: 'Error del servidor' });
+  }
+};
+
+export const searchUsers = async (req: Request, res: Response) => {
+  try {
+    const query = req.query['q'] as string;
+    if (!query || query.trim() === '') {
+      return res.json([]);
+    }
+
+    const supabase = createClient(supabaseUrl, supabaseKey);
+    const { data: users, error } = await supabase
+      .from('profiles')
+      .select('id, username, full_name, avatar_url')
+      .or(`username.ilike.%${query}%,full_name.ilike.%${query}%`)
+      .limit(20);
+
+    if (error) {
+      console.error('Error fetching users:', error);
+      return res.status(500).json({ error: 'Error al buscar usuarios' });
+    }
+
+    const currentUserId = getUserIdFromToken(req);
+
+    // Filter out the current user so they can't search for themselves
+    let filteredUsers = users || [];
+    if (currentUserId) {
+      filteredUsers = filteredUsers.filter((u) => u.id !== currentUserId);
+    }
+
+    return res.json(filteredUsers);
+  } catch (err: any) {
+    console.error('Error in searchUsers:', err);
+    return res
+      .status(500)
+      .json({ error: 'Error del servidor', details: err.message || String(err) });
   }
 };

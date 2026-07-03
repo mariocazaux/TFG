@@ -13,6 +13,19 @@ interface PublicProfile {
   bio: string | null;
   isFollowing: boolean;
   followersCount: number;
+  routes: {
+    id: string;
+    title: string;
+    difficulty: string;
+    vehicle_category: string;
+    distance_km?: number;
+  }[];
+  events: {
+    id: string;
+    title: string;
+    date: string;
+    location_name: string;
+  }[];
 }
 
 @Component({

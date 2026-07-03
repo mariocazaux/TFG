@@ -38,8 +38,9 @@
             [event]="event"
             [currentUserId]="currentUserId"
             (attend)="attendEvent($event)"
-            (edit)="onEditEvent($event)"
-            (delete)="requestDeleteEvent($event)"
+            (viewRoute)="setTab('routes')"
+            (viewProfile)="onViewProfile($event)"
+            (follow)="onFollowUser($event)"
           >
           </app-event-card>
         }
@@ -59,8 +60,8 @@
             [routeData]="route"
             [currentUserId]="currentUserId"
             (bookmark)="bookmarkRoute($event)"
-            (edit)="onEditRoute($event)"
-            (delete)="requestDeleteRoute($event)"
+            (viewProfile)="onViewProfile($event)"
+            (follow)="onFollowUser($event)"
           >
           </app-route-card>
         }

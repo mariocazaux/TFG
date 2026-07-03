@@ -37,20 +37,36 @@
     } @else {
       <div class="users-grid">
         @for (user of searchResults(); track user.id) {
-          <div class="user-card" [routerLink]="['/app/user', user.id]">
-            <img
-              [src]="
-                user.avatar_url ||
-                'https://st4.depositphotos.com/12613638/38132/v/450/depositphotos_381327364-stock-illustration-vector-icon-eps-flat-design.jpg'
-              "
-              alt="Avatar de {{ user.username }}"
-              class="user-card__avatar"
-            />
-            <div class="user-card__info">
-              <h3 class="user-card__username">{{ user.username }}</h3>
-              @if (user.full_name) {
-                <p class="user-card__fullname">{{ user.full_name }}</p>
-              }
+          <div
+            class="user-card"
+            tabindex="0"
+            (click)="goToProfile(user.id)"
+            (keyup.enter)="goToProfile(user.id)"
+          >
+            <div class="user-card__header">
+              <img
+                [src]="
+                  user.avatar_url ||
+                  'https://st4.depositphotos.com/12613638/38132/v/450/depositphotos_381327364-stock-illustration-vector-icon-eps-flat-design.jpg'
+                "
+                alt="Avatar de {{ user.username }}"
+                class="user-card__avatar"
+              />
+              <div class="user-card__info">
+                <h3 class="user-card__title">{{ user.username }}</h3>
+                @if (user.full_name) {
+                  <p class="user-card__subtitle">{{ user.full_name }}</p>
+                }
+              </div>
+            </div>
+            <div class="user-card__actions">
+              <app-button
+                variant="primary"
+                [fullWidth]="true"
+                (click)="followUser(user.id, $event)"
+              >
+                Seguir
+              </app-button>
             </div>
           </div>
         }

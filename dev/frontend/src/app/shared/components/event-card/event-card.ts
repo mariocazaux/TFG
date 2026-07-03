@@ -31,9 +31,9 @@ export class EventCardComponent {
   currentUserId = input<string | null>(null);
 
   attend = output<EventData>();
-  edit = output<EventData>();
-  delete = output<EventData>();
   viewRoute = output<string>();
+  viewProfile = output<string>();
+  follow = output<string>();
 
   getAttendeesCount(): number {
     return this.event().attendees?.[0]?.count || 0;
@@ -46,8 +46,8 @@ export class EventCardComponent {
     return this.getAttendeesCount() >= this.event().max_attendees;
   }
 
-  canEditOrDelete(): boolean {
-    return this.currentUserId() === this.event().organizer_id;
+  canFollow(): boolean {
+    return this.currentUserId() !== this.event().organizer_id;
   }
 
   getPlaceholderImage(): string {

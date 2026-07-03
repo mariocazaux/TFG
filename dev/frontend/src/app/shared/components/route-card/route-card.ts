@@ -28,11 +28,11 @@ export class RouteCardComponent {
   currentUserId = input<string | null>(null);
 
   bookmark = output<RouteData>();
-  edit = output<RouteData>();
-  delete = output<RouteData>();
+  viewProfile = output<string>();
+  follow = output<string>();
 
-  canEditOrDelete(): boolean {
-    return this.currentUserId() === this.routeData().creator_id;
+  canFollow(): boolean {
+    return this.currentUserId() !== this.routeData().creator_id;
   }
 
   getPlaceholderImage(): string {

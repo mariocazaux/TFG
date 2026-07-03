@@ -37,6 +37,10 @@ import eventsRoutes from './routes/events.routes.ts';
 app.use('/api/routes', routesRoutes);
 app.use('/api/events', eventsRoutes);
 
+// Rutas de Usuarios
+import usersRoutes from './routes/users.routes.ts';
+app.use('/api/users', usersRoutes);
+
 // Ruta básica de prueba
 app.get('/', (req: Request, res: Response) => {
   res.send('¡Hola! Servidor Express con TypeScript funcionando correctamente.');

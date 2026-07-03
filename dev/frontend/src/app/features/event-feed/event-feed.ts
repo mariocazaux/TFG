@@ -262,6 +262,34 @@ export class EventFeedComponent implements OnInit {
     this.router.navigate(['/app/create-route', route.id]);
   }
 
+  onViewProfile(userId: string) {
+    this.router.navigate(['/app/user', userId]);
+  }
+
+  onFollowUser(userId: string) {
+    if (!this.currentUserId) {
+      alert('Debes iniciar sesión para seguir a usuarios.');
+      return;
+    }
+
+    const token = this.authService.getToken();
+    const headers = { Authorization: `Bearer ${token}` };
+
+    this.http.post(`${environment.apiUrl}/users/${userId}/follow`, {}, { headers }).subscribe({
+      next: () => {
+        alert('Has seguido al usuario exitosamente.');
+      },
+      error: (err) => {
+        if (err.status === 200) {
+          alert('Ya sigues a este usuario.');
+        } else {
+          console.error('Error following user:', err);
+          alert('Hubo un error al intentar seguir al usuario.');
+        }
+      },
+    });
+  }
+
   requestDeleteEvent(event: EventData) {
     this.itemToDelete.set({ type: 'event', id: event.id, name: event.title });
   }
